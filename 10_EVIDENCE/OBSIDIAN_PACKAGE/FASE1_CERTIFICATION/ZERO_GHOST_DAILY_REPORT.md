@@ -1,0 +1,2 @@
+# ZERO GHOST SCAN DIÁRIO
+PASS. 0 Criticos.
