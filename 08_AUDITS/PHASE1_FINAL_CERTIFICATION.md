@@ -22,3 +22,6 @@
 
 # DECISÃO
 **LIBERADO PARA FASE 2**
+
+
+**Commit Hash:** `71c800a22d2716a1845c429c5fa0b4a0bb9027c8`
