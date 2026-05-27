@@ -9,8 +9,8 @@
     --text-main: #cccccc;
     --text-muted: #888888;
     
-    /* Cores Semânticas */
-    --color-focus: #1d4ed8; /* O Azul Escuro original que você gostou */
+    /* Cores Semânticas (Escala de Cinza) */
+    --color-focus: #e4e4e7; /* Cinza Quase Branco para destaque */
     --color-real: #22c55e;
     --color-attention: #eab308;
     --color-error: #ef4444;
@@ -338,8 +338,8 @@ body {
 /* 5. BARRA INFERIOR */
 .bottom-bar {
     height: 28px;
-    background-color: var(--color-focus);
-    color: #ffffff;
+    background-color: #27272a; /* Fundo Cinza Escuro */
+    color: #e4e4e7; /* Texto Cinza Claro */
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -402,9 +402,9 @@ body {
 }
 
 .badge-derived {
-    background-color: rgba(29, 78, 216, 0.15);
+    background-color: rgba(228, 228, 231, 0.1);
     color: var(--color-focus);
-    border: 1px solid rgba(29, 78, 216, 0.4);
+    border: 1px solid rgba(228, 228, 231, 0.3);
 }
 
 .badge-estimated {
