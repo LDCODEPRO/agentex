@@ -21,9 +21,11 @@ from datetime import datetime
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "01_CORE" / "orchestrator"))
 sys.path.insert(0, str(_ROOT / "02_MEMORY" / "long_term"))
+sys.path.insert(0, str(_ROOT / "01_CORE" / "mission_engine"))
 
 from react_engine import ReActEngine
 from memory_manager import MemoryManager
+from mission_brain import MissionBrain
 
 # --- Logging ---
 LOG_DIR = _ROOT / "09_LOGS"
@@ -204,6 +206,7 @@ def main():
     group.add_argument("--daemon", action="store_true", help="Modo 24/7: loop infinito processando a fila")
     group.add_argument("--once", action="store_true", help="Processa a fila uma vez e encerra")
     group.add_argument("--task", type=str, metavar="GOAL", help="Executa uma tarefa específica agora")
+    group.add_argument("--macro", type=str, metavar="GOAL", help="Córtex: Injeta Macro Objetivo quebrando dependências via LLM")
     parser.add_argument("--quiet", action="store_true", help="Reduz output (sem verbose)")
 
     args = parser.parse_args()
@@ -213,6 +216,16 @@ def main():
         maestro.run_daemon()
     elif args.once:
         maestro.run_once()
+    elif args.macro:
+        print(BANNER)
+        print(f"[Maestro] Analisando MACRO GOAL no Córtex Frontal: {args.macro}")
+        brain = MissionBrain()
+        plan = brain.generate_plan(args.macro)
+        if plan:
+            brain.ingest_plan(plan, args.macro)
+            print("[Maestro] Plano decomposto em submateriais injetados com sucesso. Rode --daemon para executar a cadeia.")
+        else:
+            print("[Maestro] Erro ao deduzir o plano cognitivo ou json vazio.")
     elif args.task:
         result = maestro.run_task(args.task, verbose=not args.quiet)
         print(f"\n{'='*50}")
