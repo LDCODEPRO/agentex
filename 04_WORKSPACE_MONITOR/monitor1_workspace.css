@@ -76,7 +76,7 @@ body {
     overflow: hidden;
 }
 
-/* 2. BARRA ESQUERDA (Source Control) */
+/* 2. BARRA ESQUERDA (Source Control e Explorador) */
 .left-bar {
     width: 250px;
     min-width: 150px;
@@ -84,17 +84,23 @@ body {
     background-color: var(--bg-panel);
     display: flex;
     flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+}
+
+.sidebar-section {
     padding: 16px;
     overflow-y: auto;
 }
 
-.sidebar-section {
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 16px;
+#left-top-section {
+    height: 50%;
+    min-height: 80px;
 }
-.sidebar-section:last-child {
-    border-bottom: none;
+
+#left-bottom-section {
+    flex: 1;
+    min-height: 80px;
 }
 
 .file-tree {
@@ -125,7 +131,17 @@ body {
     transition: background-color 0.2s;
 }
 
-.resizer:hover, .resizer.resizing {
+.resizer-h {
+    height: 4px;
+    background-color: var(--bg-deep);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    cursor: row-resize;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.resizer:hover, .resizer.resizing, .resizer-h:hover, .resizer-h.resizing {
     background-color: var(--color-focus);
 }
 

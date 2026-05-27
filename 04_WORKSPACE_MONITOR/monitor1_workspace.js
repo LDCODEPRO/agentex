@@ -70,15 +70,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const rightBar = document.getElementById('right-bar');
         const resizerLeft = document.getElementById('resizer-left');
         const resizerRight = document.getElementById('resizer-right');
+        const resizerLeftH = document.getElementById('resizer-left-h');
+        const leftTopSection = document.getElementById('left-top-section');
 
         let isResizingLeft = false;
         let isResizingRight = false;
+        let isResizingLeftH = false;
 
         resizerLeft.addEventListener('mousedown', (e) => {
             isResizingLeft = true;
             resizerLeft.classList.add('resizing');
             document.body.style.cursor = 'col-resize';
-            // Disable text selection during drag
             document.body.style.userSelect = 'none';
         });
 
@@ -89,26 +91,39 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.style.userSelect = 'none';
         });
 
+        resizerLeftH.addEventListener('mousedown', (e) => {
+            isResizingLeftH = true;
+            resizerLeftH.classList.add('resizing');
+            document.body.style.cursor = 'row-resize';
+            document.body.style.userSelect = 'none';
+        });
+
         document.addEventListener('mousemove', (e) => {
-            if (!isResizingLeft && !isResizingRight) return;
+            if (!isResizingLeft && !isResizingRight && !isResizingLeftH) return;
 
             if (isResizingLeft) {
-                // Width is bounded by CSS min/max-width
                 leftBar.style.width = `${e.clientX}px`;
             }
 
             if (isResizingRight) {
-                // Right bar width is total width minus mouse position
                 const newWidth = document.body.clientWidth - e.clientX;
                 rightBar.style.width = `${newWidth}px`;
+            }
+
+            if (isResizingLeftH) {
+                const containerRect = leftBar.getBoundingClientRect();
+                const newHeight = e.clientY - containerRect.top;
+                leftTopSection.style.height = `${newHeight}px`;
             }
         });
 
         document.addEventListener('mouseup', () => {
             isResizingLeft = false;
             isResizingRight = false;
+            isResizingLeftH = false;
             resizerLeft.classList.remove('resizing');
             resizerRight.classList.remove('resizing');
+            resizerLeftH.classList.remove('resizing');
             document.body.style.cursor = 'default';
             document.body.style.userSelect = 'auto';
         });
