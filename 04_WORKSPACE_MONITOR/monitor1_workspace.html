@@ -26,9 +26,26 @@
     </header>
 
     <div class="main-container">
-        <!-- 2. BARRA ESQUERDA - SOURCE CONTROL -->
-        <aside class="left-bar">
-            <h2>Controle de Versão</h2>
+        <!-- 2. BARRA ESQUERDA - EXPLORADOR & SOURCE CONTROL -->
+        <aside class="left-bar" id="left-bar">
+            
+            <!-- SECTION: EXPLORADOR -->
+            <div class="sidebar-section">
+                <h2>Explorador de Arquivos</h2>
+                <ul class="file-tree">
+                    <li><span class="tree-icon">📁</span> 01_CORE
+                        <ul>
+                            <li><span class="tree-icon">📄</span> <span class="badge badge-unavailable">INDISPONÍVEL</span></li>
+                        </ul>
+                    </li>
+                    <li><span class="tree-icon">📁</span> 02_MEMORY</li>
+                    <li><span class="tree-icon">📁</span> 08_AUDITS</li>
+                </ul>
+            </div>
+
+            <!-- SECTION: SOURCE CONTROL -->
+            <div class="sidebar-section">
+                <h2>Controle de Versão</h2>
             <div class="sc-status">
                 <p>Status: <span class="badge badge-unavailable" id="git-status">INDISPONÍVEL</span></p>
                 <p>Ramificação (Branch): <span class="badge badge-unavailable" id="git-branch">INDISPONÍVEL</span></p>
@@ -61,10 +78,13 @@
                     <li><span class="badge badge-unavailable">INDISPONÍVEL</span></li>
                 </ul>
             </div>
+            </div> <!-- End sidebar-section -->
         </aside>
 
+        <div class="resizer resizer-left" id="resizer-left"></div>
+
         <!-- 3. BARRA CENTRAL - WALKTHROUGH -->
-        <main class="center-bar">
+        <main class="center-bar" id="center-bar">
             <div class="center-header">
                 <h2>Painel Principal <span class="badge badge-real">REAL</span></h2>
                 <div class="view-tabs">
@@ -124,8 +144,10 @@
             </div>
         </main>
 
+        <div class="resizer resizer-right" id="resizer-right"></div>
+
         <!-- 4. BARRA DIREITA - CHAT COM AGENTE-X -->
-        <aside class="right-bar">
+        <aside class="right-bar" id="right-bar">
             <h2>Chat com AGENTE-X</h2>
             
             <div class="chat-mode-selector">

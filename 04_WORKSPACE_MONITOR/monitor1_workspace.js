@@ -64,10 +64,61 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    // --- RESIZER LOGIC ---
+    function setupResizers() {
+        const leftBar = document.getElementById('left-bar');
+        const rightBar = document.getElementById('right-bar');
+        const resizerLeft = document.getElementById('resizer-left');
+        const resizerRight = document.getElementById('resizer-right');
+
+        let isResizingLeft = false;
+        let isResizingRight = false;
+
+        resizerLeft.addEventListener('mousedown', (e) => {
+            isResizingLeft = true;
+            resizerLeft.classList.add('resizing');
+            document.body.style.cursor = 'col-resize';
+            // Disable text selection during drag
+            document.body.style.userSelect = 'none';
+        });
+
+        resizerRight.addEventListener('mousedown', (e) => {
+            isResizingRight = true;
+            resizerRight.classList.add('resizing');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizingLeft && !isResizingRight) return;
+
+            if (isResizingLeft) {
+                // Width is bounded by CSS min/max-width
+                leftBar.style.width = `${e.clientX}px`;
+            }
+
+            if (isResizingRight) {
+                // Right bar width is total width minus mouse position
+                const newWidth = document.body.clientWidth - e.clientX;
+                rightBar.style.width = `${newWidth}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizingLeft = false;
+            isResizingRight = false;
+            resizerLeft.classList.remove('resizing');
+            resizerRight.classList.remove('resizing');
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        });
+    }
+
     // Loop de heartbeat simulado
     setInterval(fetchBackendStatus, 5000);
     
     // Inicialização
     fetchBackendStatus();
     loadMarkdownFiles();
+    setupResizers();
 });

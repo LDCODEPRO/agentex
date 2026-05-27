@@ -1,19 +1,20 @@
 /* AGENTE-X | Deep Dark Theme (Estilo Antigravity/Codex) */
 
 :root {
-    --bg-deep: #09090b;
-    --bg-panel: #18181b;
-    --bg-panel-hover: #27272a;
-    --border-color: #27272a;
-    --text-main: #e4e4e7;
-    --text-muted: #a1a1aa;
+    /* Paleta Replit / Antigravity (Cinza Neutro Profundo) */
+    --bg-deep: #121212;
+    --bg-panel: #1e1e1e;
+    --bg-panel-hover: #2a2a2a;
+    --border-color: #333333;
+    --text-main: #cccccc;
+    --text-muted: #888888;
     
-    /* Cores Semânticas */
-    --color-focus: #1d4ed8; /* Azul Escuro Elegante (Royal Blue) */
-    --color-real: #22c55e;  /* Verde */
-    --color-attention: #eab308; /* Amarelo */
-    --color-error: #ef4444; /* Vermelho */
-    --color-unavailable: #71717a; /* Cinza */
+    /* Cores Semânticas (Muito Muted / Neutras) */
+    --color-focus: #3b82f6; /* Azul apenas para foco, resto em cinza */
+    --color-real: #4ade80;  /* Verde atenuado */
+    --color-attention: #fbbf24; 
+    --color-error: #f87171; 
+    --color-unavailable: #555555; 
 }
 
 * {
@@ -77,13 +78,55 @@ body {
 
 /* 2. BARRA ESQUERDA (Source Control) */
 .left-bar {
-    width: 300px;
+    width: 250px;
+    min-width: 150px;
+    max-width: 500px;
     background-color: var(--bg-panel);
-    border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     padding: 16px;
     overflow-y: auto;
+}
+
+.sidebar-section {
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+}
+.sidebar-section:last-child {
+    border-bottom: none;
+}
+
+.file-tree {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 1.6;
+}
+.file-tree ul {
+    list-style: none;
+    padding-left: 16px;
+    border-left: 1px solid var(--border-color);
+    margin-left: 6px;
+}
+.tree-icon {
+    font-size: 11px;
+    margin-right: 4px;
+    opacity: 0.7;
+}
+
+.resizer {
+    width: 4px;
+    background-color: var(--bg-deep);
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    cursor: col-resize;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.resizer:hover, .resizer.resizing {
+    background-color: var(--color-focus);
 }
 
 .left-bar h2, .right-bar h2 {
@@ -220,9 +263,10 @@ body {
 
 /* 4. BARRA DIREITA (Chat) */
 .right-bar {
-    width: 350px;
+    width: 300px;
+    min-width: 200px;
+    max-width: 600px;
     background-color: var(--bg-panel);
-    border-left: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     padding: 16px;
@@ -293,9 +337,9 @@ body {
 
 /* 5. BARRA INFERIOR */
 .bottom-bar {
-    height: 30px;
+    height: 28px;
     background-color: var(--color-focus);
-    color: #000;
+    color: #ffffff;
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -341,42 +385,38 @@ body {
     font-size: 11px;
 }
 
-/* BADGES (VERDADE ABSOLUTA) */
+/* BADGES (Cinza Monocromático Estrito) */
 .badge {
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .badge-real {
-    background-color: rgba(34, 197, 94, 0.2);
-    color: var(--color-real);
-    border: 1px solid rgba(34, 197, 94, 0.5);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-panel-hover);
 }
 
 .badge-derived {
-    background-color: rgba(6, 182, 212, 0.2);
-    color: var(--color-focus);
-    border: 1px solid rgba(6, 182, 212, 0.5);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
 }
 
 .badge-estimated {
-    background-color: rgba(234, 179, 8, 0.2);
-    color: var(--color-attention);
-    border: 1px solid rgba(234, 179, 8, 0.5);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
 }
 
 .badge-unavailable {
-    background-color: rgba(113, 113, 122, 0.2);
     color: var(--color-unavailable);
-    border: 1px solid rgba(113, 113, 122, 0.5);
+    border: 1px dashed var(--border-color);
 }
 
 .badge-error {
-    background-color: rgba(239, 68, 68, 0.2);
     color: var(--color-error);
-    border: 1px solid rgba(239, 68, 68, 0.5);
+    border: 1px solid var(--border-color);
 }
