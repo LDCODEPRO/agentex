@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGENTE-X | Workspace Monitor 1</title>
+    <link rel="stylesheet" href="monitor1_workspace.css">
+</head>
+<body>
+
+    <!-- 1. BARRA SUPERIOR -->
+    <header class="top-bar">
+        <div class="logo-area">AGENTE-X <span class="badge badge-real">REAL</span></div>
+        <nav class="top-menu">
+            <ul>
+                <li>ARQUIVO</li>
+                <li>EDITAR</li>
+                <li>SELEÇÃO</li>
+                <li>VER</li>
+                <li>IR</li>
+                <li>EXECUTAR</li>
+                <li>TERMINAL</li>
+                <li>AJUDA</li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- 2. BARRA ESQUERDA - SOURCE CONTROL -->
+        <aside class="left-bar">
+            <h2>Source Control</h2>
+            <div class="sc-status">
+                <p>Status: <span class="badge badge-unavailable" id="git-status">UNAVAILABLE</span></p>
+                <p>Branch: <span class="badge badge-unavailable" id="git-branch">UNAVAILABLE</span></p>
+                <p>Último Commit: <span class="badge badge-unavailable" id="git-commit">UNAVAILABLE</span></p>
+            </div>
+            
+            <div class="sc-files">
+                <h3>Arquivos Modificados</h3>
+                <ul id="modified-files">
+                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                </ul>
+                <h3>Arquivos Novos</h3>
+                <ul id="new-files">
+                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                </ul>
+                <h3>Arquivos Pendentes</h3>
+                <ul id="pending-files">
+                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                </ul>
+            </div>
+
+            <div class="sc-actions">
+                <button class="btn btn-primary" disabled>Commit</button>
+                <button class="btn btn-secondary" disabled>Push</button>
+            </div>
+
+            <div class="sc-history">
+                <h3>Histórico Curto</h3>
+                <ul id="git-history">
+                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 3. BARRA CENTRAL - WALKTHROUGH -->
+        <main class="center-bar">
+            <div class="center-header">
+                <h2>Walkthrough <span class="badge badge-real">REAL</span></h2>
+                <div class="phase-info">
+                    <p>Fase atual: <strong>FASE 2 — PROJECT BUILDER ENGINE</strong></p>
+                    <p>Fase 1: <span class="badge badge-real">CERTIFICADA</span></p>
+                    <p>Classificação Atual: <strong>PRODUCTION_CANDIDATE CONTROLADO</strong></p>
+                    <p>Próxima missão: F2.1 — Project Intelligence Engine</p>
+                </div>
+            </div>
+
+            <div class="center-content">
+                <div class="panel">
+                    <h3>Checklist de Progresso</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" checked disabled> M6.2+ Phase 1 Certification</li>
+                        <li><input type="checkbox" checked disabled> F2.0 Monitor 1 Workspace</li>
+                        <li><input type="checkbox" disabled> F2.1 Project Intelligence Engine</li>
+                    </ul>
+                </div>
+
+                <div class="panel">
+                    <h3>Linha do Tempo de Execução</h3>
+                    <div id="timeline">
+                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Arquivos/Relatórios Recentes</h3>
+                    <div id="recent-files">
+                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                    </div>
+                </div>
+
+                <div class="panel markdown-view">
+                    <h3>walkthrough.md</h3>
+                    <div class="md-content" id="walkthrough-content">
+                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                    </div>
+                </div>
+
+                <div class="panel markdown-view">
+                    <h3>implementation_plan.md</h3>
+                    <div class="md-content" id="impl-plan-content">
+                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 4. BARRA DIREITA - CHAT COM AGENTE-X -->
+        <aside class="right-bar">
+            <h2>Chat com AGENTE-X</h2>
+            
+            <div class="chat-mode-selector">
+                <label for="mode-select">Modo:</label>
+                <select id="mode-select">
+                    <option value="diretor">Diretor</option>
+                    <option value="developer">Developer</option>
+                    <option value="architect">Architect</option>
+                    <option value="auditor">Auditor</option>
+                    <option value="debugger">Debugger</option>
+                    <option value="memory">Memory</option>
+                </select>
+            </div>
+
+            <div class="chat-status">
+                <span class="badge badge-unavailable">CHAT_RUNTIME = UNAVAILABLE</span>
+            </div>
+
+            <div class="chat-history" id="chat-history">
+                <p class="sys-msg">O backend de comunicação não está conectado. Modos operacionais em suspensão.</p>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea placeholder="Digite sua ordem aqui..." disabled></textarea>
+                <button class="btn btn-primary" disabled>Enviar</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 5. BARRA INFERIOR - DADOS DO SISTEMA E DO AGENTE -->
+    <footer class="bottom-bar">
+        <div class="status-item"><strong>AGENTE-X</strong></div>
+        <div class="status-item">FASE 2</div>
+        <div class="status-item">Runtime: <span class="badge badge-unavailable" id="status-runtime">UNAVAILABLE</span></div>
+        <div class="status-item">Git: <span class="badge badge-unavailable" id="status-git">UNAVAILABLE</span></div>
+        <div class="status-item">Memory: <span class="badge badge-unavailable" id="status-memory">UNAVAILABLE</span></div>
+        <div class="status-item">Governance: <span class="badge badge-unavailable" id="status-gov">UNAVAILABLE</span></div>
+        <div class="status-item">SQLite: <span class="badge badge-unavailable" id="status-sqlite">UNAVAILABLE</span></div>
+        <div class="status-item">Obsidian: <span class="badge badge-unavailable" id="status-obsidian">UNAVAILABLE</span></div>
+        <div class="status-item">Último commit: <span class="badge badge-unavailable" id="status-hash">UNAVAILABLE</span></div>
+    </footer>
+
+    <script src="monitor1_workspace.js"></script>
+</body>
+</html>
