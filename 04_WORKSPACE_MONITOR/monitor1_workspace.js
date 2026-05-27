@@ -7,7 +7,7 @@ Seguindo a regra "Truth First": se o backend não existir, mantemos UNAVAILABLE.
 document.addEventListener("DOMContentLoaded", () => {
     // Nesta versão inicial (V1), o backend em Python (WebSocket ou REST API)
     // ainda não foi inicializado/acoplado à UI.
-    // Assim, nossa função fetchStatus sempre cairá no catch e manterá o UNAVAILABLE
+    // Assim, nossa função fetchStatus sempre cairá no catch e manterá o INDISPONÍVEL
     // evitando falsificar dados verdes inexistentes.
 
     const badges = document.querySelectorAll('.badge-unavailable');
@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Backend conectado.");
             })
             .catch(error => {
-                console.warn("Backend (Real-Time API) não detectado. Mantendo UNAVAILABLE em todas as frentes.");
-                // As badges por padrão já são UNAVAILABLE. 
+                console.warn("Backend (Real-Time API) não detectado. Mantendo INDISPONÍVEL em todas as frentes.");
+                // As badges por padrão já são INDISPONÍVEL. 
                 // A regra determina: "Não inventar status verde".
             });
     }
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 wtContent.previousElementSibling.innerHTML += ' <span class="badge badge-real">REAL</span>';
             })
             .catch(() => {
-                wtContent.innerHTML = '<span class="badge badge-unavailable">UNAVAILABLE</span>';
+                wtContent.innerHTML = '<span class="badge badge-unavailable">INDISPONÍVEL</span>';
             });
             
         fetch('../08_AUDITS/implementation_plan.md')
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 implContent.previousElementSibling.innerHTML += ' <span class="badge badge-real">REAL</span>';
             })
             .catch(() => {
-                implContent.innerHTML = '<span class="badge badge-unavailable">UNAVAILABLE</span>';
+                implContent.innerHTML = '<span class="badge badge-unavailable">INDISPONÍVEL</span>';
             });
     }
 

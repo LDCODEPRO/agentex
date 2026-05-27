@@ -28,25 +28,25 @@
     <div class="main-container">
         <!-- 2. BARRA ESQUERDA - SOURCE CONTROL -->
         <aside class="left-bar">
-            <h2>Source Control</h2>
+            <h2>Controle de Versão</h2>
             <div class="sc-status">
-                <p>Status: <span class="badge badge-unavailable" id="git-status">UNAVAILABLE</span></p>
-                <p>Branch: <span class="badge badge-unavailable" id="git-branch">UNAVAILABLE</span></p>
-                <p>Último Commit: <span class="badge badge-unavailable" id="git-commit">UNAVAILABLE</span></p>
+                <p>Status: <span class="badge badge-unavailable" id="git-status">INDISPONÍVEL</span></p>
+                <p>Ramificação (Branch): <span class="badge badge-unavailable" id="git-branch">INDISPONÍVEL</span></p>
+                <p>Último Commit: <span class="badge badge-unavailable" id="git-commit">INDISPONÍVEL</span></p>
             </div>
             
             <div class="sc-files">
                 <h3>Arquivos Modificados</h3>
                 <ul id="modified-files">
-                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                    <li><span class="badge badge-unavailable">INDISPONÍVEL</span></li>
                 </ul>
                 <h3>Arquivos Novos</h3>
                 <ul id="new-files">
-                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                    <li><span class="badge badge-unavailable">INDISPONÍVEL</span></li>
                 </ul>
                 <h3>Arquivos Pendentes</h3>
                 <ul id="pending-files">
-                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                    <li><span class="badge badge-unavailable">INDISPONÍVEL</span></li>
                 </ul>
             </div>
 
@@ -58,7 +58,7 @@
             <div class="sc-history">
                 <h3>Histórico Curto</h3>
                 <ul id="git-history">
-                    <li><span class="badge badge-unavailable">UNAVAILABLE</span></li>
+                    <li><span class="badge badge-unavailable">INDISPONÍVEL</span></li>
                 </ul>
             </div>
         </aside>
@@ -66,7 +66,12 @@
         <!-- 3. BARRA CENTRAL - WALKTHROUGH -->
         <main class="center-bar">
             <div class="center-header">
-                <h2>Walkthrough <span class="badge badge-real">REAL</span></h2>
+                <h2>Painel Principal <span class="badge badge-real">REAL</span></h2>
+                <div class="view-tabs">
+                    <button class="btn tab-btn active">Resumo do Projeto</button>
+                    <button class="btn tab-btn">Preview de Aplicação</button>
+                    <button class="btn tab-btn">Explorador de Arquivos</button>
+                </div>
                 <div class="phase-info">
                     <p>Fase atual: <strong>FASE 2 — PROJECT BUILDER ENGINE</strong></p>
                     <p>Fase 1: <span class="badge badge-real">CERTIFICADA</span></p>
@@ -88,28 +93,32 @@
                 <div class="panel">
                     <h3>Linha do Tempo de Execução</h3>
                     <div id="timeline">
-                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                        <span class="badge badge-unavailable">INDISPONÍVEL</span>
                     </div>
                 </div>
 
                 <div class="panel">
                     <h3>Arquivos/Relatórios Recentes</h3>
+                    <div class="file-actions" style="margin-bottom: 10px; display: flex; gap: 8px;">
+                        <button class="btn btn-secondary btn-sm">Abrir Relatório</button>
+                        <button class="btn btn-secondary btn-sm">Ver Código</button>
+                    </div>
                     <div id="recent-files">
-                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                        <span class="badge badge-unavailable">INDISPONÍVEL</span>
                     </div>
                 </div>
 
                 <div class="panel markdown-view">
                     <h3>walkthrough.md</h3>
                     <div class="md-content" id="walkthrough-content">
-                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                        <span class="badge badge-unavailable">INDISPONÍVEL</span>
                     </div>
                 </div>
 
                 <div class="panel markdown-view">
                     <h3>implementation_plan.md</h3>
                     <div class="md-content" id="impl-plan-content">
-                        <span class="badge badge-unavailable">UNAVAILABLE</span>
+                        <span class="badge badge-unavailable">INDISPONÍVEL</span>
                     </div>
                 </div>
             </div>
@@ -132,11 +141,11 @@
             </div>
 
             <div class="chat-status">
-                <span class="badge badge-unavailable">CHAT_RUNTIME = UNAVAILABLE</span>
+                <span class="badge badge-unavailable">CHAT_RUNTIME = INDISPONÍVEL</span>
             </div>
 
             <div class="chat-history" id="chat-history">
-                <p class="sys-msg">O backend de comunicação não está conectado. Modos operacionais em suspensão.</p>
+                <p class="sys-msg">O sistema de comunicação não está conectado. Modos operacionais em suspensão.</p>
             </div>
 
             <div class="chat-input-area">
@@ -150,13 +159,13 @@
     <footer class="bottom-bar">
         <div class="status-item"><strong>AGENTE-X</strong></div>
         <div class="status-item">FASE 2</div>
-        <div class="status-item">Runtime: <span class="badge badge-unavailable" id="status-runtime">UNAVAILABLE</span></div>
-        <div class="status-item">Git: <span class="badge badge-unavailable" id="status-git">UNAVAILABLE</span></div>
-        <div class="status-item">Memory: <span class="badge badge-unavailable" id="status-memory">UNAVAILABLE</span></div>
-        <div class="status-item">Governance: <span class="badge badge-unavailable" id="status-gov">UNAVAILABLE</span></div>
-        <div class="status-item">SQLite: <span class="badge badge-unavailable" id="status-sqlite">UNAVAILABLE</span></div>
-        <div class="status-item">Obsidian: <span class="badge badge-unavailable" id="status-obsidian">UNAVAILABLE</span></div>
-        <div class="status-item">Último commit: <span class="badge badge-unavailable" id="status-hash">UNAVAILABLE</span></div>
+        <div class="status-item">Execução: <span class="badge badge-unavailable" id="status-runtime">INDISPONÍVEL</span></div>
+        <div class="status-item">Git: <span class="badge badge-unavailable" id="status-git">INDISPONÍVEL</span></div>
+        <div class="status-item">Memória: <span class="badge badge-unavailable" id="status-memory">INDISPONÍVEL</span></div>
+        <div class="status-item">Governança: <span class="badge badge-unavailable" id="status-gov">INDISPONÍVEL</span></div>
+        <div class="status-item">Banco (SQLite): <span class="badge badge-unavailable" id="status-sqlite">INDISPONÍVEL</span></div>
+        <div class="status-item">Sincronia: <span class="badge badge-unavailable" id="status-obsidian">INDISPONÍVEL</span></div>
+        <div class="status-item">Último commit: <span class="badge badge-unavailable" id="status-hash">INDISPONÍVEL</span></div>
     </footer>
 
     <script src="monitor1_workspace.js"></script>

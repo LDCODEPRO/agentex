@@ -9,7 +9,7 @@
     --text-muted: #a1a1aa;
     
     /* Cores Semânticas */
-    --color-focus: #06b6d4; /* Ciano/Azul */
+    --color-focus: #1d4ed8; /* Azul Escuro Elegante (Royal Blue) */
     --color-real: #22c55e;  /* Verde */
     --color-attention: #eab308; /* Amarelo */
     --color-error: #ef4444; /* Vermelho */
@@ -139,6 +139,31 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.view-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.tab-btn {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    background-color: var(--bg-panel-hover);
+}
+
+.tab-btn.active {
+    color: var(--color-focus);
+    border-bottom: 2px solid var(--color-focus);
+    border-radius: 0;
 }
 
 .phase-info p {
@@ -309,6 +334,11 @@ body {
     background-color: var(--bg-deep);
     color: var(--text-main);
     border: 1px solid var(--border-color);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
 }
 
 /* BADGES (VERDADE ABSOLUTA) */
