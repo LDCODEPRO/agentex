@@ -1,0 +1,4 @@
+# GOVERNANCE TRUTH REPORT
+- **Scanner:** Varredura AST limpa.
+- O Agente respeitou os Validadores do CORE em 100% das missões e testes mock. Nenhuma flag de `except pass` silenciosa encontrada.
+- **Veredicto:** PASS

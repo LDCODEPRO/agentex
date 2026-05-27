@@ -1,0 +1,5 @@
+# FINAL SQLITE AUTOPSY
+- **PRAGMA integrity_check:** ok
+- **PRAGMA foreign_key_check:** OK
+- **Corrupção:** Nenhuma.
+- **Veredicto:** PASS

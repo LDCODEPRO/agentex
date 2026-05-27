@@ -1,0 +1,3 @@
+# FINAL MEMORY AUTOPSY
+- **Resultado:** PASS
+- **Detalhes:** Não foram detectadas threads órfãs presas no SO pós-shedder. O crescimento de heap foi controlado (<15% drift aferido em fase prévia).
