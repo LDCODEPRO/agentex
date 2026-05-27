@@ -1,0 +1,50 @@
+# AGENTE-X: Universal Gitignore
+
+# Core Data & Secrets
+.env
+.sqlite3
+*.sqlite3
+*.db
+agente_x.db
+02_MEMORY/vector/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env_python/
+
+# Logs & Debug
+*.log
+09_LOGS/*.log
+09_LOGS/*.jsonl
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+.obsidian/workspace
+.obsidian/workspace.json

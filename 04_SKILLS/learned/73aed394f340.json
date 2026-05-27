@@ -1,0 +1,26 @@
+{
+  "id": "73aed394f340",
+  "goal_pattern": "Auditar repositorio e gerar relatorio completo de missao",
+  "steps": [
+    "THOUGHT: listar",
+    "ACTION: file_tool",
+    "OBS: 15 dirs",
+    "THOUGHT: analisar",
+    "ACTION: memory_tool",
+    "OBS: salvo",
+    "THOUGHT: redigir",
+    "ACTION: file_tool write",
+    "FINAL: relatorio criado"
+  ],
+  "tools_used": [
+    "file_tool",
+    "memory_tool"
+  ],
+  "final_answer_sample": "Relatorio MISSION_005 gerado com sucesso",
+  "success": true,
+  "runs": 1,
+  "successes": 1,
+  "success_rate": 1.0,
+  "created_at": "2026-05-27T00:31:37",
+  "last_used": "2026-05-27T00:31:37"
+}
