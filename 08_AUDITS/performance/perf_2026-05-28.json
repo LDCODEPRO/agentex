@@ -1,0 +1,35 @@
+{
+  "missions": {
+    "total": 7090,
+    "completed": 1101,
+    "failed": 1,
+    "running": 0,
+    "success_rate_pct": 15.5
+  },
+  "queue_today": {
+    "done": 0,
+    "failed": 0,
+    "throughput_rate": 0
+  },
+  "finance": {
+    "today_usd": 0.0,
+    "today_tokens_in": 0,
+    "today_tokens_out": 0,
+    "month_usd": 0.014243,
+    "total_usd": 0.014243,
+    "calls_today": 0,
+    "top_model_today": "N/A",
+    "top_provider_ever": "deepseek-v4-pro",
+    "avg_cost_per_call_today": 0.0
+  },
+  "reliability": {
+    "errors_today": 0,
+    "error_rate_pct": 0.0,
+    "total_events_today": 0
+  },
+  "knowledge": {
+    "total": 79,
+    "governance_rules": 16,
+    "learned_facts": 12
+  }
+}

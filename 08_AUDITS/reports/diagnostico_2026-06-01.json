@@ -1,0 +1,122 @@
+{
+  "timestamp": "2026-06-01T23:31:07.605879",
+  "elapsed_s": 0.36,
+  "score": {
+    "score": 95,
+    "status": "EXCELENTE",
+    "issues": [
+      "Backup desatualizado: 3 dias"
+    ],
+    "modules_ok": 40,
+    "modules_total": 40
+  },
+  "modules": {
+    "ok": [
+      "00_GOVERNANCE/RULES/safe_gate.py",
+      "00_GOVERNANCE/RULES/risk_engine.py",
+      "01_CORE/orchestrator/llm_router.py",
+      "01_CORE/orchestrator/tool_registry.py",
+      "01_CORE/orchestrator/react_engine.py",
+      "01_CORE/orchestrator/task_classifier.py",
+      "01_CORE/orchestrator/learning_loop.py",
+      "01_CORE/tools/base_tool.py",
+      "01_CORE/tools/file_tool.py",
+      "01_CORE/tools/shell_tool.py",
+      "01_CORE/tools/memory_tool.py",
+      "01_CORE/tools/web_tool.py",
+      "01_CORE/finance/finance_engine.py",
+      "01_CORE/validation/hallucination_guard.py",
+      "01_CORE/validation/trace_context.py",
+      "01_CORE/validation/anti_loop_guard.py",
+      "02_MEMORY/long_term/db_init.py",
+      "02_MEMORY/long_term/memory_manager.py",
+      "02_MEMORY/vector_memory/chroma_manager.py",
+      "02_MEMORY/short_term/context_manager.py",
+      "03_RUNTIME/maestro.py",
+      "04_SKILLS/skill_manager.py",
+      "04_SKILLS/hermes_core.py",
+      "04_SKILLS/hermes_knowledge_seeder.py",
+      "06_CONTAINERS/whatsapp/whatsapp_agent.py",
+      "10_GITHUB/save_manager.py",
+      "10_GITHUB/daily_report_generator.py",
+      "01_CORE/mission_engine/mission_brain.py",
+      "01_CORE/mission_engine/mission_engine.py",
+      "01_CORE/mission_engine/mission_executor.py",
+      "01_CORE/mission_engine/mission_planner.py",
+      "01_CORE/mission_engine/mission_templates.py",
+      "01_CORE/mission_engine/mission_validator.py",
+      "01_CORE/mission_engine/rollback_engine.py",
+      "agente_x.py",
+      "setup_agente_x.py",
+      "agente_diagnostico.py",
+      "05_HEALTH/health_monitor.py",
+      "05_HEALTH/performance_tracker.py",
+      "05_HEALTH/auto_tuner.py"
+    ],
+    "missing": [],
+    "syntax_error": []
+  },
+  "database": {
+    "db_path": "/sessions/adoring-exciting-tesla/mnt/Agente X/02_MEMORY/agente_x.db",
+    "exists": true,
+    "size_kb": 1352.0,
+    "tables": {
+      "missions": 1113,
+      "sessions": 0,
+      "logs": 8306,
+      "knowledge": 112,
+      "fila_execucao": 733,
+      "financeiro": 101,
+      "llm_usage_ledger": 101,
+      "rate_limit_stats": 105
+    },
+    "missing_tables": [],
+    "queue_health": {
+      "QUEUED": 0,
+      "RUNNING": 0,
+      "DONE": 733,
+      "FAILED": 0,
+      "CANCELLED": 0,
+      "stuck_running": 0
+    },
+    "finance_today": 0.0
+  },
+  "providers": {
+    "env_exists": true,
+    "deepseek": true,
+    "claude": true,
+    "openai": true,
+    "gemini": true,
+    "ollama_host": "http://localhost:11434",
+    "ollama_alive": false,
+    "configured_count": 4
+  },
+  "backups": {
+    "backup_dir_exists": true,
+    "backups_found": [
+      "backup_2026-05-25",
+      "backup_2026-05-26",
+      "backup_2026-05-27",
+      "backup_2026-05-29"
+    ],
+    "latest_backup": "backup_2026-05-29",
+    "days_since_backup": 3,
+    "bat_exists": true
+  },
+  "environment": {
+    "python_version": "3.10.12",
+    "platform": "linux",
+    "root": "/sessions/adoring-exciting-tesla/mnt/Agente X",
+    "deps": {
+      "requests": "OK",
+      "dotenv": "OK",
+      "sqlite3": "OK",
+      "chromadb": "AUSENTE",
+      "fastapi": "AUSENTE",
+      "uvicorn": "AUSENTE"
+    },
+    "env_exists": true,
+    "soul_exists": true,
+    "agents_exists": false
+  }
+}

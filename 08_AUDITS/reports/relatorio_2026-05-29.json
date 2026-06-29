@@ -1,0 +1,253 @@
+{
+  "timestamp": "2026-05-29T21:28:00.179577",
+  "date": "2026-05-29",
+  "db_available": true,
+  "missions": {
+    "total": 1113,
+    "done": 7,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "list": [
+      {
+        "code": "MISSION_TEST_REAL_1779850586",
+        "title": "Mission MISSION_TEST_REAL_1779850586",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "P_1779850586",
+        "title": "Mission P_1779850586",
+        "status": "MISSION_VALIDATED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "C1_1779850586",
+        "title": "Mission C1_1779850586",
+        "status": "MISSION_CREATED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "RB_1779850587",
+        "title": "Mission RB_1779850587",
+        "status": "MISSION_FAILED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_0",
+        "title": "Mission MEM_0",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_1",
+        "title": "Mission MEM_1",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_2",
+        "title": "Mission MEM_2",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_3",
+        "title": "Mission MEM_3",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_4",
+        "title": "Mission MEM_4",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_5",
+        "title": "Mission MEM_5",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_6",
+        "title": "Mission MEM_6",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_7",
+        "title": "Mission MEM_7",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_8",
+        "title": "Mission MEM_8",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_9",
+        "title": "Mission MEM_9",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_10",
+        "title": "Mission MEM_10",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_11",
+        "title": "Mission MEM_11",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_12",
+        "title": "Mission MEM_12",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_13",
+        "title": "Mission MEM_13",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_14",
+        "title": "Mission MEM_14",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "MEM_15",
+        "title": "Mission MEM_15",
+        "status": "MISSION_COMPLETED",
+        "started_at": null,
+        "ended_at": null
+      }
+    ]
+  },
+  "queue": {
+    "queued": 0,
+    "running": 0,
+    "done": 733,
+    "failed": 0,
+    "cancelled": 0,
+    "done_today": 0,
+    "stuck_running": 0
+  },
+  "finance": {
+    "today_usd": 0.0,
+    "month_usd": 0.014243,
+    "total_usd": 0.014243,
+    "top_model": "N/A",
+    "calls_today": 0
+  },
+  "logs": {
+    "total": 8232,
+    "errors_today": 0,
+    "warnings_today": 0,
+    "recent_errors": [
+      {
+        "level": "ERROR",
+        "source": "MissionBrain",
+        "message": "Falha na quebra LLM: 'LLMRouter' object has no attribute 'chat'",
+        "created_at": "2026-05-27T03:45:54"
+      }
+    ]
+  },
+  "knowledge": {
+    "total": 104,
+    "by_category": [
+      {
+        "category": "AGENT_PATTERNS",
+        "count": 20
+      },
+      {
+        "category": "RULE",
+        "count": 16
+      },
+      {
+        "category": "LLM_CONFIG",
+        "count": 9
+      },
+      {
+        "category": "LLM_PRICES",
+        "count": 9
+      },
+      {
+        "category": "ARCHITECTURE",
+        "count": 8
+      },
+      {
+        "category": "LEARNED_ERROR",
+        "count": 8
+      },
+      {
+        "category": "LESSONS_LEARNED",
+        "count": 8
+      },
+      {
+        "category": "OPERATIONAL_RULES",
+        "count": 7
+      },
+      {
+        "category": "MODULE_STATUS",
+        "count": 6
+      },
+      {
+        "category": "SYSTEM_AUDIT",
+        "count": 6
+      },
+      {
+        "category": "LEARNED_RULE",
+        "count": 4
+      },
+      {
+        "category": "DIAGNOSTICS",
+        "count": 3
+      }
+    ]
+  },
+  "providers": {
+    "deepseek": true,
+    "claude": true,
+    "openai": true,
+    "gemini": true,
+    "configured_count": 4
+  },
+  "backups": {
+    "count": 4,
+    "latest": "backup_2026-05-29",
+    "list": [
+      "backup_2026-05-25",
+      "backup_2026-05-26",
+      "backup_2026-05-27",
+      "backup_2026-05-29"
+    ]
+  }
+}
