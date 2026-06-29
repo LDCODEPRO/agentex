@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-06-29T17:54:05.924437",
-  "elapsed_s": 5.3,
+  "timestamp": "2026-06-29T18:01:55.210504",
+  "elapsed_s": 5.52,
   "score": {
     "score": 100,
     "status": "EXCELENTE",
@@ -61,7 +61,7 @@
     "tables": {
       "missions": 1113,
       "sessions": 0,
-      "logs": 8401,
+      "logs": 8402,
       "knowledge": 112,
       "fila_execucao": 733,
       "financeiro": 101,
