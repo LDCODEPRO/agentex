@@ -48,12 +48,30 @@ class FileTool(BaseTool):
             ok, msg = validate_action("WRITE", str(target))
             if not ok:
                 return f"[FileTool] BLOQUEADO: {msg}"
+            
+            # Syntax Guard para scripts Python
+            if target.suffix == ".py":
+                import ast
+                try:
+                    ast.parse(content)
+                except SyntaxError as se:
+                    return (
+                        f"[FileTool] ESCRITA BLOQUEADA: Erro de sintaxe Python detectado!\n"
+                        f"  Arquivo: {path}\n"
+                        f"  Linha: {se.lineno}\n"
+                        f"  Coluna: {se.offset}\n"
+                        f"  Erro: {se.msg}\n"
+                        f"  Código problemático: '{se.text.strip() if se.text else ''}'\n"
+                        f"Por favor, corrija a sintaxe antes de salvar."
+                    )
+            
             try:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(content, encoding="utf-8")
                 return f"[FileTool] Escrito: {path} ({len(content)} chars)"
             except Exception as e:
                 return f"[FileTool] Erro ao escrever: {e}"
+
 
         elif operation == "list":
             ok, msg = validate_action("READ", str(target))

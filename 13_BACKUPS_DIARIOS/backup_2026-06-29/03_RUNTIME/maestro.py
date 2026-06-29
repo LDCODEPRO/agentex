@@ -17,6 +17,7 @@ import argparse
 import asyncio
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "01_CORE" / "orchestrator"))
@@ -135,12 +136,12 @@ class Maestro:
     # ------------------------------------------------------------------
 
     def run_once(self) -> int:
-        """Processa todas as missões na fila e retorna o número processadas."""
+        """Processa todas as missões destravadas na fila e retorna o número processadas."""
         print(BANNER)
         print("[Maestro] Modo ONE-SHOT — processando fila completa...")
         processed = 0
         while True:
-            item = self.mm.dequeue_next()
+            item = self._dequeue_ready_item()
             if not item:
                 break
             self._execute_item(item)
@@ -177,9 +178,34 @@ class Maestro:
     # Processamento da fila
     # ------------------------------------------------------------------
 
+    def _dequeue_ready_item(self) -> Optional[dict]:
+        """
+        Pega o próximo item da fila cujo grafo de dependências esteja satisfeito.
+        Garante que missões dependentes não iniciem fora de ordem.
+        """
+        from dependency_graph import DependencyGraph
+        graph = DependencyGraph()
+        
+        with self.mm._conn() as conn:
+            # Buscar todos os itens queued
+            rows = conn.execute(
+                "SELECT * FROM fila_execucao WHERE status='QUEUED' ORDER BY priority ASC, id ASC"
+            ).fetchall()
+            
+            for row in rows:
+                item = dict(row)
+                if graph.can_start(item["mission_code"]):
+                    # Marcar como RUNNING no banco de dados da fila
+                    conn.execute(
+                        "UPDATE fila_execucao SET status='RUNNING', started_at=strftime('%Y-%m-%dT%H:%M:%S','now') WHERE id=?",
+                        (item["id"],),
+                    )
+                    return item
+            return None
+
     def _process_next_in_queue(self) -> bool:
-        """Tenta pegar e executar o próximo item da fila. Retorna True se processou algo."""
-        item = self.mm.dequeue_next()
+        """Tenta pegar e executar o próximo item destravado da fila. Retorna True se processou algo."""
+        item = self._dequeue_ready_item()
         if not item:
             return False
 
@@ -189,9 +215,13 @@ class Maestro:
         self._execute_item(item)
         return True
 
+
     def _execute_item(self, item: dict) -> None:
         """Executa um item da fila usando o ReAct Engine."""
         import json
+        from mission_state_manager import MissionStateManager
+        
+        state_mgr = MissionStateManager()
         payload = {}
         if item.get("payload"):
             try:
@@ -201,15 +231,27 @@ class Maestro:
 
         goal = payload.get("goal", f"Executar missão: {item['mission_code']}")
         engine = ReActEngine(session_id=f"queue_{item['id']}")
+        
+        # Transicionar missão para RUNNING no banco de dados principal
+        state_mgr.transition(item["mission_code"], "MISSION_RUNNING", f"Executando via Maestro: {goal[:50]}")
 
         try:
             result = engine.run(goal=goal, verbose=True)
             self.mm.finish_queue_item(item["id"], status="DONE")
+            
+            # Se a resposta do ReAct contiver "FALHA" ou "ERRO" ou "SAFE_MODE"
+            if "FALHA" in result or "ERRO" in result or "SAFE_MODE" in result:
+                state_mgr.transition(item["mission_code"], "MISSION_FAILED", f"ReAct encerrou com falha: {result[:80]}")
+            else:
+                state_mgr.transition(item["mission_code"], "MISSION_VALIDATED", f"ReAct concluiu com sucesso: {result[:80]}")
+                
             self.mm.log("INFO", "Maestro", f"Queue item {item['id']} concluído: {result[:80]}")
             self._tasks_processed += 1
         except Exception as e:
             self.mm.finish_queue_item(item["id"], status="FAILED")
+            state_mgr.transition(item["mission_code"], "MISSION_FAILED", f"Erro crítico na execução: {str(e)[:80]}")
             logger.error("Queue item %d falhou: %s", item["id"], e)
+
 
     # ------------------------------------------------------------------
     # Heartbeat

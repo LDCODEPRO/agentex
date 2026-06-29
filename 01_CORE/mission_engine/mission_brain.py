@@ -85,10 +85,16 @@ class MissionBrain:
         self.mm.enqueue_mission(macro_code, payload={"goal": macro_goal}, priority=9)
         self.mm.log("INFO", "MissionBrain", f"Macro Ingested: {macro_code}")
 
+        from mission_state_manager import MissionStateManager
+        state_mgr = MissionStateManager()
+
         for step in plan:
             # Prefixa para evitar colisão
             code = f"{session_prefix}_{step.get('code', 'UNK')}"
             goal = step.get('goal', '')
+            
+            # Criar fisicamente na tabela missions com status inicial
+            state_mgr.transition(code, "MISSION_CREATED", f"Macro-step para: {macro_goal[:50]}")
             
             # 1. Enfileira a tarefa
             self.mm.enqueue_mission(code, payload={"goal": goal, "parent": macro_code})
@@ -101,3 +107,4 @@ class MissionBrain:
                 
         self.mm.log("INFO", "MissionBrain", f"Plano com {len(plan)} submateriais injetado no Grafo.")
         return True
+

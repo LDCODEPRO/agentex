@@ -14,6 +14,14 @@ from typing import Optional
 _ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = _ROOT / "04_SKILLS" / "learned"
 
+try:
+    import sys as _sys
+    _sys.path.insert(0, str(_ROOT / "02_MEMORY" / "vector_memory"))
+    from chroma_manager import ChromaManager
+except Exception:
+    ChromaManager = None
+
+
 
 class SkillManager:
     """
@@ -25,6 +33,14 @@ class SkillManager:
         SKILLS_DIR.mkdir(parents=True, exist_ok=True)
         self._skills: dict[str, dict] = {}
         self._load_all()
+        
+        try:
+            if ChromaManager:
+                self.chroma = ChromaManager(collection_name="agente_x_skills")
+            else:
+                self.chroma = None
+        except Exception:
+            self.chroma = None
 
     def _load_all(self) -> None:
         for f in SKILLS_DIR.glob("*.json"):
@@ -83,13 +99,40 @@ class SkillManager:
         }
         self._skills[skill_id] = skill
         self._persist(skill_id, skill)
+
+        # Indexar no ChromaDB
+        if self.chroma and self.chroma._available:
+            try:
+                self.chroma.add_memory(
+                    doc_id=f"skill:{skill_id}",
+                    text=f"Objetivo: {goal} | Ferramentas: {', '.join(tools_used)}",
+                    metadata={"category": "SKILL", "skill_id": skill_id}
+                )
+            except Exception:
+                pass
+
         return skill_id
 
     def find_relevant_skills(self, goal: str, limit: int = 3) -> list:
         """
         Retorna skills relevantes para o goal atual.
-        Usa match simples de palavras-chave (sem embedding).
+        Usa busca vetorial se ChromaDB estiver disponível, com fallback para match de palavras-chave.
         """
+        # Tenta busca vetorial semântica primeiro
+        if self.chroma and self.chroma._available:
+            try:
+                results = self.chroma.search_memory(query=goal, n_results=limit, where={"category": "SKILL"})
+                matched_skills = []
+                for r in results:
+                    skill_id = r["metadata"].get("skill_id")
+                    if skill_id in self._skills:
+                        matched_skills.append(self._skills[skill_id])
+                if matched_skills:
+                    return matched_skills
+            except Exception:
+                pass
+
+        # Fallback honesto: match simples de palavras-chave
         goal_words = set(goal.lower().split())
         scored = []
         for skill in self._skills.values():
@@ -99,6 +142,7 @@ class SkillManager:
                 scored.append((overlap * skill["success_rate"], skill))
         scored.sort(key=lambda x: x[0], reverse=True)
         return [s for _, s in scored[:limit]]
+
 
     def format_skills_for_prompt(self, goal: str) -> str:
         """
