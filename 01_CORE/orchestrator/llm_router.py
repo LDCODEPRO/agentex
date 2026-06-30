@@ -141,6 +141,10 @@ class LLMRouter:
 
     OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
     OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")
+    # Timeout proprio do Ollama (separado do self.timeout dos provedores pagos):
+    # em CPU-only (sem GPU, ex: VPS), prefill do system prompt completo (SOUL+director+AGENTS.md)
+    # facilmente passa de 60s. Custo zero -> pode esperar mais sem problema.
+    OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "240"))
 
     def __init__(self, timeout: int = 60):
         self.timeout = timeout
@@ -160,7 +164,7 @@ class LLMRouter:
         r = requests.post(
             f"{self.OLLAMA_HOST}/api/chat",
             json=payload,
-            timeout=self.timeout,
+            timeout=self.OLLAMA_TIMEOUT,
         )
         r.raise_for_status()
         return r.json()["message"]["content"]
