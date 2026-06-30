@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-06-29T18:01:55.210504",
-  "elapsed_s": 5.52,
+  "timestamp": "2026-06-29T23:37:29.517995",
+  "elapsed_s": 3.47,
   "score": {
     "score": 100,
     "status": "EXCELENTE",
@@ -57,16 +57,16 @@
   "database": {
     "db_path": "E:\\Projeto0 AGENTES\\Agente X\\02_MEMORY\\agente_x.db",
     "exists": true,
-    "size_kb": 1372.0,
+    "size_kb": 1380.0,
     "tables": {
       "missions": 1113,
       "sessions": 0,
-      "logs": 8402,
+      "logs": 8404,
       "knowledge": 112,
       "fila_execucao": 733,
-      "financeiro": 101,
-      "llm_usage_ledger": 101,
-      "rate_limit_stats": 105
+      "financeiro": 106,
+      "llm_usage_ledger": 106,
+      "rate_limit_stats": 111
     },
     "missing_tables": [],
     "queue_health": {
@@ -77,7 +77,7 @@
       "CANCELLED": 0,
       "stuck_running": 0
     },
-    "finance_today": 0.0
+    "finance_today": 1e-05
   },
   "providers": {
     "env_exists": true,
@@ -86,7 +86,7 @@
     "openai": true,
     "gemini": true,
     "ollama_host": "http://localhost:11434",
-    "ollama_alive": false,
+    "ollama_alive": true,
     "configured_count": 4
   },
   "backups": {

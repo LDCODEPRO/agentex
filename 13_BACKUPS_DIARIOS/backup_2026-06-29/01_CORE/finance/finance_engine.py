@@ -30,8 +30,8 @@ class FinanceEngine:
     PRICES = {
         # DeepSeek (precos atualizados 2026 — fonte: api-docs.deepseek.com)
         "deepseek-v3":           {"input": 0.14  / 1_000_000, "output": 0.28  / 1_000_000},
-        "deepseek-v4-pro":       {"input": 0.14  / 1_000_000, "output": 0.28  / 1_000_000},
         "deepseek-chat":         {"input": 0.14  / 1_000_000, "output": 0.28  / 1_000_000},
+        "deepseek-v4-pro":       {"input": 0.14  / 1_000_000, "output": 0.28  / 1_000_000},  # V4 lancou 2026-04-24; preco a CONFIRMAR na fonte oficial
         # Anthropic
         "claude-sonnet-4-6":     {"input": 3.00  / 1_000_000, "output": 15.00 / 1_000_000},
         "claude-haiku-4-5-20251001": {"input": 0.80 / 1_000_000, "output": 4.00 / 1_000_000},

@@ -187,7 +187,7 @@ def seed_agent_patterns():
          "AGENTE-X: Maestro(orchestrator) + REACT_ENGINE + WHATSAPP + AGENTE_X.",
          "maestro.py + anti_loop_guard.py"),
         ("AGENT_PATTERNS", "cost_optimization_strategies",
-         "Estrategias de otimizacao de custo LLM: (1) usar modelo menor para classificacao (deepseek-v4-pro), "
+         "Estrategias de otimizacao de custo LLM: (1) usar modelo local Ollama para classificacao (custo zero), "
          "(2) cache de respostas identicas, (3) comprimir prompt removendo exemplos redundantes, "
          "(4) usar local (Ollama) para tarefas simples, (5) circuit breaker para evitar loops caros. "
          "Implementado: FinanceEngine + task_classifier + anti_loop_guard.",

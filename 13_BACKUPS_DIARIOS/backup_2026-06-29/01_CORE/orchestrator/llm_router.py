@@ -46,22 +46,72 @@ except Exception:
     _ANTI_LOOP = None
     _TraceContext = None
 
-# Modelo recomendado por tipo de task (task_type -> model_override)
+# Modelo por especialidade da tarefa (task_type -> modelo real).
+# Tarefas LEVES nao entram aqui de proposito: sem override, o Ollama local
+# (custo zero) as atende primeiro. As demais usam o DeepSeek V4 Pro
+# (lancado 2026-04-24: 1.6T params, 1M contexto, modo thinking) — o topo real.
+# NOTA: deepseek-chat/reasoner sao legados e serao depreciados em 2026-07-24.
 _TASK_MODEL_MAP = {
-    "FAST_SUMMARY":    "deepseek-v4-pro",
-    "CLASSIFICATION":  "deepseek-v4-pro",
-    "CODING":          "deepseek-v4-pro",
-    "DEBUGGING":       "deepseek-v4-pro",
-    "ARCHITECTURE":    "deepseek-v4-pro",
-    "MISSION_EXECUTION": "deepseek-v4-pro",
-    "GOVERNANCE":      "deepseek-v4-pro",
-    "PRIVACY":         "deepseek-v4-pro",
-    "FORENSIC":        "deepseek-v4-pro",
-    "GENERAL_CHAT":    "deepseek-v4-pro",
+    "CODING": {
+        "claude": "claude-3-5-sonnet-20241022",
+        "openai": "gpt-4o",
+        "openrouter": "nousresearch/hermes-3-llama-3-70b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
+    "DEBUGGING": {
+        "claude": "claude-3-5-sonnet-20241022",
+        "openai": "gpt-4o",
+        "openrouter": "nousresearch/hermes-3-llama-3-70b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
+    "ARCHITECTURE": {
+        "claude": "claude-3-5-sonnet-20241022",
+        "openai": "gpt-4o",
+        "openrouter": "nousresearch/hermes-3-llama-3-70b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
+    "GOVERNANCE": {
+        "claude": "claude-3-5-haiku-20241022",
+        "openai": "gpt-4o-mini",
+        "openrouter": "nousresearch/hermes-3-llama-3-8b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
+    "FORENSIC": {
+        "claude": "claude-3-5-sonnet-20241022",
+        "openai": "gpt-4o",
+        "openrouter": "nousresearch/hermes-3-llama-3-70b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
+    "MISSION_EXECUTION": {
+        "claude": "claude-3-5-sonnet-20241022",
+        "openai": "gpt-4o",
+        "openrouter": "nousresearch/hermes-3-llama-3-70b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
+    "GENERAL_CHAT": {
+        "claude": "claude-3-5-haiku-20241022",
+        "openai": "gpt-4o-mini",
+        "openrouter": "nousresearch/hermes-3-llama-3-8b",
+        "deepseek": "deepseek-v4-pro",
+        "gemini": "gemini-2.0-flash",
+        "ollama": "qwen3:8b",
+    },
 }
 
 _ROOT = Path(__file__).resolve().parent.parent.parent
-load_dotenv(_ROOT / ".env")
+load_dotenv(_ROOT / ".env", override=True)
 
 logging.basicConfig(
     filename=str(_ROOT / "09_LOGS" / "llm_router.log"),
@@ -79,17 +129,18 @@ def _key_valid(key: str) -> bool:
 
 class LLMRouter:
     """
-    Roteador de LLM com prioridade local.
+    Roteador de LLM otimizado para custo e focado em Claude e OpenAI primarios.
     Ordem de tentativa:
-      1. Ollama (local, privado, custo zero)
-      2. DeepSeek API
-      3. Claude / Anthropic API
-      4. OpenAI API
+      1. Claude / Anthropic API (com Prompt Caching ativado)
+      2. OpenAI API (caching automatico)
+      3. DeepSeek API
+      4. Gemini / Google API
+      5. Ollama (local, privado, custo zero)
     Sem fallback para resposta simulada: falha com excecao real.
     """
 
     OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3")
+    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")
 
     def __init__(self, timeout: int = 60):
         self.timeout = timeout
@@ -130,7 +181,7 @@ class LLMRouter:
         return r.json()["choices"][0]["message"]["content"]
 
     def _call_anthropic(self, messages: list, model: str, system: str) -> str:
-        """Chamada nativa para Anthropic Claude API."""
+        """Chamada nativa para Anthropic Claude API com suporte a Prompt Caching."""
         api_key = os.getenv("CLAUDE_API_KEY", "")
         if not _key_valid(api_key):
             raise ValueError("CLAUDE_API_KEY nao configurada")
@@ -140,15 +191,25 @@ class LLMRouter:
         if not anthropic_messages:
             anthropic_messages = [{"role": "user", "content": "Ola"}]
 
+        # Ativar cache_control no system prompt (reduz custos em ate 90% para prompts longos)
+        system_blocks = [
+            {
+                "type": "text",
+                "text": system,
+                "cache_control": {"type": "ephemeral"}
+            }
+        ]
+
         headers = {
             "x-api-key": api_key,
             "anthropic-version": "2023-06-01",
+            "anthropic-beta": "prompt-caching-2024-07-31",
             "Content-Type": "application/json",
         }
         payload = {
             "model": model,
             "max_tokens": 4096,
-            "system": system,
+            "system": system_blocks,
             "messages": anthropic_messages,
         }
         r = requests.post(
@@ -159,6 +220,26 @@ class LLMRouter:
         )
         r.raise_for_status()
         return r.json()["content"][0]["text"]
+
+    def _call_openrouter(self, messages: list, model: str) -> str:
+        """Chamada nativa para OpenRouter API (compativel com OpenAI)."""
+        api_key = os.getenv("OPENROUTER_API_KEY", "")
+        if not _key_valid(api_key):
+            raise ValueError("OPENROUTER_API_KEY nao configurada")
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "HTTP-Referer": "https://github.com/LDCODEPRO/agentex",
+            "X-Title": "Agente X",
+            "Content-Type": "application/json",
+        }
+        r = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json={"model": model, "messages": messages},
+            timeout=self.timeout,
+        )
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"]
 
     def _call_gemini(self, messages: list, model: str) -> str:
         """Chamada para Google Gemini API."""
@@ -187,7 +268,7 @@ class LLMRouter:
         depth: int = 0,
     ) -> dict:
         """
-        Roteia o prompt para o melhor provider disponivel.
+        Roteia o prompt para o melhor provider disponivel (Claude -> OpenAI -> DeepSeek -> Gemini -> Ollama).
         Retorna dict com: provider, model, response, latency_ms, timestamp.
         Lanca RuntimeError se todos os providers falharem.
         """
@@ -208,43 +289,118 @@ class LLMRouter:
             if not allowed:
                 raise RuntimeError(f"[AntiLoopGuard] Bloqueado: {reason}")
 
-        # Classificar tarefa e ajustar modelo se necessário
+        # Classificar tipo de tarefa
+        task_type = None
         if _CLASSIFIER and prompt:
             classification = _CLASSIFIER.classify(prompt)
             task_type = classification.get("task_type", "GENERAL_CHAT")
-            confidence = classification.get("confidence", 0.0)
-            if confidence >= 0.55 and model is None:
-                suggested = _TASK_MODEL_MAP.get(task_type)
-                if suggested:
-                    model = suggested
-            logger.info("Task classificada: %s (conf=%.2f)", task_type, confidence)
+            logger.info("Task classificada: %s", task_type)
 
-        # 1. Ollama local
-        if self._is_ollama_alive():
+        def get_model_for(provider: str, default_model: str) -> str:
+            if model:
+                return model
+            if task_type:
+                suggested_map = _TASK_MODEL_MAP.get(task_type)
+                if suggested_map and provider in suggested_map:
+                    return suggested_map[provider]
+            return default_model
+
+        # 1. Claude (Anthropic) - Prioridade Máxima de Assinatura Direta + Caching
+        claude_key = os.getenv("CLAUDE_API_KEY", "")
+        if _key_valid(claude_key):
             try:
+                m = get_model_for("claude", "claude-3-5-haiku-20241022")
+                if _FINANCE:
+                    ok, reason = _FINANCE.finance_preflight(
+                        provider="claude", model=m,
+                        est_input=len(prompt or "") // 4,
+                        est_output=500,
+                    )
+                    if not ok:
+                        raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
+
                 t0 = time.time()
-                resp = self._call_ollama(messages, model)
-                return self._build_result("ollama", model or self.OLLAMA_MODEL, resp, t0)
+                resp = self._call_anthropic(messages, m, system)
+                result = self._build_result("claude", m, resp, t0)
+                if _FINANCE:
+                    tokens_in = len(prompt or "") // 4
+                    tokens_out = len(resp) // 4
+                    _FINANCE.record_usage("claude", m, tokens_in, tokens_out)
+                return result
             except Exception as e:
-                errors.append(f"ollama: {e}")
-                logger.warning("Ollama falhou: %s", e)
+                errors.append(f"claude: {e}")
+                logger.warning("Claude falhou: %s", e)
 
-        # 2. DeepSeek
-        # Finance preflight — circuit breaker antes de qualquer chamada paga
-        if _FINANCE:
-            ok, reason = _FINANCE.finance_preflight(
-                provider="deepseek", model=model or "deepseek-v4-pro",
-                est_input=len(prompt or "") // 4,
-                est_output=500,
-            )
-            if not ok:
-                raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
+        # 2. OpenAI - Segunda Prioridade de Assinatura Direta
+        openai_key = os.getenv("OPENAI_API_KEY", "")
+        if _key_valid(openai_key):
+            try:
+                m = get_model_for("openai", "gpt-4o-mini")
+                if _FINANCE:
+                    ok, reason = _FINANCE.finance_preflight(
+                        provider="openai", model=m,
+                        est_input=len(prompt or "") // 4,
+                        est_output=500,
+                    )
+                    if not ok:
+                        raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
 
+                t0 = time.time()
+                resp = self._call_openai_compatible(
+                    "https://api.openai.com/v1/chat/completions",
+                    openai_key, messages, m
+                )
+                result = self._build_result("openai", m, resp, t0)
+                if _FINANCE:
+                    tokens_in = len(prompt or "") // 4
+                    tokens_out = len(resp) // 4
+                    _FINANCE.record_usage("openai", m, tokens_in, tokens_out)
+                return result
+            except Exception as e:
+                errors.append(f"openai: {e}")
+                logger.warning("OpenAI falhou: %s", e)
+
+        # 3. OpenRouter (Opcional)
+        openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+        if _key_valid(openrouter_key):
+            try:
+                m = get_model_for("openrouter", "nousresearch/hermes-3-llama-3-8b")
+                if _FINANCE:
+                    ok, reason = _FINANCE.finance_preflight(
+                        provider="openrouter", model=m,
+                        est_input=len(prompt or "") // 4,
+                        est_output=500,
+                    )
+                    if not ok:
+                        raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
+
+                t0 = time.time()
+                resp = self._call_openrouter(messages, m)
+                result = self._build_result("openrouter", m, resp, t0)
+                if _FINANCE:
+                    tokens_in = len(prompt or "") // 4
+                    tokens_out = len(resp) // 4
+                    _FINANCE.record_usage("openrouter", m, tokens_in, tokens_out)
+                return result
+            except Exception as e:
+                errors.append(f"openrouter: {e}")
+                logger.warning("OpenRouter falhou: %s", e)
+
+        # 3. DeepSeek (Terceira Prioridade)
         deepseek_key = os.getenv("DEEPSEEK_API_KEY", "")
         if _key_valid(deepseek_key):
             try:
+                m = get_model_for("deepseek", "deepseek-v4-pro")
+                if _FINANCE:
+                    ok, reason = _FINANCE.finance_preflight(
+                        provider="deepseek", model=m,
+                        est_input=len(prompt or "") // 4,
+                        est_output=500,
+                    )
+                    if not ok:
+                        raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
+
                 t0 = time.time()
-                m = model or "deepseek-v4-pro"
                 resp = self._call_openai_compatible(
                     "https://api.deepseek.com/v1/chat/completions",
                     deepseek_key, messages, m
@@ -259,44 +415,42 @@ class LLMRouter:
                 errors.append(f"deepseek: {e}")
                 logger.warning("DeepSeek falhou: %s", e)
 
-        # 3. Claude (Anthropic)
-        claude_key = os.getenv("CLAUDE_API_KEY", "")
-        if _key_valid(claude_key):
-            try:
-                t0 = time.time()
-                m = model or "claude-haiku-4-5-20251001"
-                resp = self._call_anthropic(messages, m, system)
-                return self._build_result("claude", m, resp, t0)
-            except Exception as e:
-                errors.append(f"claude: {e}")
-                logger.warning("Claude falhou: %s", e)
-
-        # 4. OpenAI
-        openai_key = os.getenv("OPENAI_API_KEY", "")
-        if _key_valid(openai_key):
-            try:
-                t0 = time.time()
-                m = model or "gpt-4o-mini"
-                resp = self._call_openai_compatible(
-                    "https://api.openai.com/v1/chat/completions",
-                    openai_key, messages, m
-                )
-                return self._build_result("openai", m, resp, t0)
-            except Exception as e:
-                errors.append(f"openai: {e}")
-                logger.warning("OpenAI falhou: %s", e)
-
-        # 5. Gemini
+        # 4. Gemini (Quarta Prioridade)
         gemini_key = os.getenv("GEMINI_API_KEY", "")
         if _key_valid(gemini_key):
             try:
+                m = get_model_for("gemini", "gemini-2.0-flash")
+                if _FINANCE:
+                    ok, reason = _FINANCE.finance_preflight(
+                        provider="gemini", model=m,
+                        est_input=len(prompt or "") // 4,
+                        est_output=500,
+                    )
+                    if not ok:
+                        raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
+
                 t0 = time.time()
-                m = model or "gemini-2.0-flash"
                 resp = self._call_gemini(messages, m)
-                return self._build_result("gemini", m, resp, t0)
+                result = self._build_result("gemini", m, resp, t0)
+                if _FINANCE:
+                    tokens_in = len(prompt or "") // 4
+                    tokens_out = len(resp) // 4
+                    _FINANCE.record_usage("gemini", m, tokens_in, tokens_out)
+                return result
             except Exception as e:
                 errors.append(f"gemini: {e}")
                 logger.warning("Gemini falhou: %s", e)
+
+        # 5. Ollama local (Fallback de Custo Zero)
+        if self._is_ollama_alive():
+            try:
+                t0 = time.time()
+                m = get_model_for("ollama", self.OLLAMA_MODEL)
+                resp = self._call_ollama(messages, m)
+                return self._build_result("ollama", m, resp, t0)
+            except Exception as e:
+                errors.append(f"ollama: {e}")
+                logger.warning("Ollama falhou: %s", e)
 
         # Zero Ghost: sem fallback simulado
         error_summary = " | ".join(errors) if errors else "Nenhum provider configurado"
@@ -319,6 +473,7 @@ class LLMRouter:
             "ollama_alive": self._is_ollama_alive(),
             "ollama_host": self.OLLAMA_HOST,
             "ollama_model": self.OLLAMA_MODEL,
+            "openrouter_configured": _key_valid(os.getenv("OPENROUTER_API_KEY", "")),
             "deepseek_configured": _key_valid(os.getenv("DEEPSEEK_API_KEY", "")),
             "claude_configured": _key_valid(os.getenv("CLAUDE_API_KEY", "")),
             "openai_configured": _key_valid(os.getenv("OPENAI_API_KEY", "")),
