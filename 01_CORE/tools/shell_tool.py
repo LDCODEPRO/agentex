@@ -2,6 +2,7 @@
 AGENTE-X | Shell Tool
 Executa comandos no terminal -- integrado ao safe_gate.
 """
+import shlex
 import subprocess
 import sys
 import importlib.util
@@ -36,8 +37,11 @@ class ShellTool(BaseTool):
             return f"[ShellTool] BLOQUEADO: {msg}"
         work_dir = str(_ROOT / cwd) if cwd else str(_ROOT)
         try:
+            # shell=False + lista de argumentos: elimina o vetor de shell injection
+            # (sem shell intermediario nao ha metacaractere/expansao pra explorar).
+            args = shlex.split(command, posix=(sys.platform != "win32"))
             result = subprocess.run(
-                command, shell=True, capture_output=True,
+                args, shell=False, capture_output=True,
                 text=True, timeout=int(timeout), cwd=work_dir,
             )
             output = ""

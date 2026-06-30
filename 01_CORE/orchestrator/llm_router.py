@@ -154,7 +154,9 @@ class LLMRouter:
 
     def _call_ollama(self, messages: list, model: str = None) -> str:
         model = model or self.OLLAMA_MODEL
-        payload = {"model": model, "messages": messages, "stream": False}
+        # think=False desliga o "raciocinio" do qwen3 -> resposta MUITO mais rapida
+        # (o thinking deixava o cerebro lento demais e estourava o timeout de 60s).
+        payload = {"model": model, "messages": messages, "stream": False, "think": False}
         r = requests.post(
             f"{self.OLLAMA_HOST}/api/chat",
             json=payload,
@@ -162,6 +164,15 @@ class LLMRouter:
         )
         r.raise_for_status()
         return r.json()["message"]["content"]
+
+    def _call_studio(self, url: str, prompt: str) -> str:
+        """Ponte de assinatura LOCAL do Diretor (ex: Studio de Posts). Custo ZERO.
+        Contrato: POST {message, history:[]} -> {reply}. O login/assinatura ficam
+        inteiramente na ponte (o Diretor opera); aqui so trocamos texto via HTTP local."""
+        r = requests.post(url, json={"message": prompt, "history": []}, timeout=self.timeout)
+        r.raise_for_status()
+        data = r.json()
+        return data.get("reply") or data.get("response") or str(data)
 
     def _call_openai_compatible(self, url: str, api_key: str, messages: list, model: str) -> str:
         """Chamada compativel com OpenAI (DeepSeek usa o mesmo formato)."""
@@ -304,6 +315,19 @@ class LLMRouter:
                 if suggested_map and provider in suggested_map:
                     return suggested_map[provider]
             return default_model
+
+        # 0. STUDIO BRIDGE — assinatura via ponte local do Diretor. Prioridade MAXIMA, custo ZERO.
+        # So ativa se STUDIO_BRIDGE_URL estiver no .env E a ponte estiver no ar; senao cai pro fallback.
+        studio_url = os.getenv("STUDIO_BRIDGE_URL", "")
+        if studio_url:
+            try:
+                t0 = time.time()
+                resp = self._call_studio(studio_url, prompt or "Continue.")
+                if resp and resp.strip():
+                    return self._build_result("studio", "assinatura", resp, t0)
+            except Exception as e:
+                errors.append(f"studio: {e}")
+                logger.warning("Studio bridge indisponivel (caindo pro fallback): %s", e)
 
         # 1. Claude (Anthropic) - Prioridade Máxima de Assinatura Direta + Caching
         claude_key = os.getenv("CLAUDE_API_KEY", "")
