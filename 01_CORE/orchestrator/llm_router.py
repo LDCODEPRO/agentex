@@ -169,11 +169,16 @@ class LLMRouter:
         r.raise_for_status()
         return r.json()["message"]["content"]
 
-    def _call_studio(self, url: str, prompt: str) -> str:
+    def _call_studio(self, url: str, prompt: str, system: str = None) -> str:
         """Ponte de assinatura LOCAL do Diretor (ex: Studio de Posts). Custo ZERO.
-        Contrato: POST {message, history:[]} -> {reply}. O login/assinatura ficam
-        inteiramente na ponte (o Diretor opera); aqui so trocamos texto via HTTP local."""
-        r = requests.post(url, json={"message": prompt, "history": []}, timeout=self.timeout)
+        Contrato: POST {message, history:[], system} -> {reply}. O login/assinatura
+        ficam inteiramente na ponte (o Diretor opera); aqui so trocamos texto via
+        HTTP local. 'system' sobrescreve a persona padrao da ponte (ex: Agente-X
+        precisa da sua propria identidade + formato Thought/Action/Final Answer)."""
+        payload = {"message": prompt, "history": []}
+        if system:
+            payload["system"] = system
+        r = requests.post(url, json=payload, timeout=self.timeout)
         r.raise_for_status()
         data = r.json()
         return data.get("reply") or data.get("response") or str(data)
@@ -333,7 +338,7 @@ class LLMRouter:
         if studio_url:
             try:
                 t0 = time.time()
-                resp = self._call_studio(studio_url, prompt or "Continue.")
+                resp = self._call_studio(studio_url, prompt or "Continue.", system=system)
                 if resp and resp.strip():
                     return self._build_result("studio", "assinatura", resp, t0)
             except Exception as e:
