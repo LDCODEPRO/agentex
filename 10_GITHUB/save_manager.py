@@ -137,7 +137,15 @@ class SaveManager:
     # ------------------------------------------------------------------
 
     def _backup_github(self) -> dict:
-        """Faz git add, commit e push."""
+        """Faz git add, commit e push.
+
+        Pulado quando AGENTE_X_VPS_NO_GIT=true: a VPS roda como espelho
+        somente-leitura do GitHub (fonte da verdade); commitar/pushar de la
+        diverge o historico e contraria o fluxo de deploy.
+        """
+        import os
+        if os.getenv("AGENTE_X_VPS_NO_GIT", "false").lower() == "true":
+            return {"ok": True, "message": "Pulado (AGENTE_X_VPS_NO_GIT=true) — VPS e somente-leitura de codigo"}
         try:
             # Verificar se é repositório git
             result = subprocess.run(
