@@ -130,10 +130,13 @@ class ReActEngine:
     # Execução principal
     # ------------------------------------------------------------------
 
-    def run(self, goal: str, verbose: bool = True) -> str:
+    def run(self, goal: str, verbose: bool = True, interactive: bool = False) -> str:
         """
         Executa o loop ReAct para atingir o objetivo.
         Retorna a resposta final ou mensagem de erro.
+
+        interactive=True: chat em tempo real com o Diretor esperando resposta.
+        Sai do Ollama custo-zero (lento, CPU-only) pra provedor pago barato.
         """
         logger.info("=== NOVA EXECUÇÃO === Goal: %s", goal)
         self.context.set_goal(goal)
@@ -170,12 +173,13 @@ class ReActEngine:
                 result = self.router.route(
                     prompt=user_msg if not history else None,
                     system=system,
+                    interactive=interactive,
                 )
                 # Para multi-turno, passar histórico completo
                 if history:
                     # Reformatar com histórico
                     full_prompt = self._format_history(goal, history)
-                    result = self.router.route(prompt=full_prompt, system=system)
+                    result = self.router.route(prompt=full_prompt, system=system, interactive=interactive)
 
                 llm_response = result["response"].strip()
                 provider = result["provider"]

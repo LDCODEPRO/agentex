@@ -281,12 +281,19 @@ class LLMRouter:
         agent_name: str = "AGENTE_X",
         mission_id: str = "UNKNOWN",
         depth: int = 0,
+        interactive: bool = False,
     ) -> dict:
         """
         Roteia o prompt para o melhor provider disponivel (Claude -> OpenAI -> DeepSeek -> Gemini -> Ollama).
         Retorna dict com: provider, model, response, latency_ms, timestamp.
         Lanca RuntimeError se todos os providers falharem.
+
+        interactive=True marca chat em tempo real (humano esperando resposta):
+        sai da regra de custo zero do daemon e usa provedores pagos baratos pra
+        responder em segundos em vez de minutos no Ollama CPU-only. Continua sob
+        o teto AGENTE_X_DAILY_LIMIT_USD/HARD_STOP_USD (FinanceEngine.finance_preflight).
         """
+        purpose = "CHAT_INTERACTIVE" if interactive else "GENERAL"
         messages = [
             {"role": "system", "content": system},
             {"role": "user", "content": prompt or "Continue."},
@@ -343,6 +350,7 @@ class LLMRouter:
                         provider="claude", model=m,
                         est_input=len(prompt or "") // 4,
                         est_output=500,
+                        purpose=purpose,
                     )
                     if not ok:
                         raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
@@ -369,6 +377,7 @@ class LLMRouter:
                         provider="openai", model=m,
                         est_input=len(prompt or "") // 4,
                         est_output=500,
+                        purpose=purpose,
                     )
                     if not ok:
                         raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
@@ -398,6 +407,7 @@ class LLMRouter:
                         provider="openrouter", model=m,
                         est_input=len(prompt or "") // 4,
                         est_output=500,
+                        purpose=purpose,
                     )
                     if not ok:
                         raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
@@ -424,6 +434,7 @@ class LLMRouter:
                         provider="deepseek", model=m,
                         est_input=len(prompt or "") // 4,
                         est_output=500,
+                        purpose=purpose,
                     )
                     if not ok:
                         raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")
@@ -453,6 +464,7 @@ class LLMRouter:
                         provider="gemini", model=m,
                         est_input=len(prompt or "") // 4,
                         est_output=500,
+                        purpose=purpose,
                     )
                     if not ok:
                         raise RuntimeError(f"[FinanceEngine] Bloqueado: {reason}")

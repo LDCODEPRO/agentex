@@ -106,6 +106,7 @@ def main():
     parser.add_argument("--save",     action="store_true", help="Backup: GitHub + Obsidian")
     parser.add_argument("--diagnose", action="store_true", help="Diagnostico completo do sistema (39 modulos)")
     parser.add_argument("--quiet",    action="store_true", help="Reduz output")
+    parser.add_argument("--fast",     action="store_true", help="Chat em tempo real: usa provedor pago barato em vez do Ollama custo-zero (so com --task)")
 
     args = parser.parse_args()
 
@@ -135,7 +136,7 @@ def main():
         elif args.once:
             maestro.run_once()
         elif args.task:
-            result = maestro.run_task(args.task, verbose=not args.quiet)
+            result = maestro.run_task(args.task, verbose=not args.quiet, interactive=args.fast)
             print(f"\n{'='*60}")
             print(result)
 
@@ -162,7 +163,8 @@ def main():
                 if goal.lower().startswith("fila:"):
                     cmd_enqueue(goal[5:].strip())
                     continue
-                result = maestro.run_task(goal, verbose=not args.quiet)
+                # Modo interativo = Diretor esperando na tela -> chat em tempo real.
+                result = maestro.run_task(goal, verbose=not args.quiet, interactive=True)
                 print(f"\n{'═'*60}")
                 print(f"✅ {result}")
                 print(f"{'═'*60}\n")

@@ -153,7 +153,7 @@ class Maestro:
     # Modo Task: executa uma tarefa específica diretamente
     # ------------------------------------------------------------------
 
-    def run_task(self, goal: str, verbose: bool = True) -> str:
+    def run_task(self, goal: str, verbose: bool = True, interactive: bool = False) -> str:
         """Executa uma tarefa específica imediatamente, sem passar pela fila."""
         print(BANNER)
         print(f"[Maestro] Executando tarefa direta:")
@@ -164,7 +164,7 @@ class Maestro:
         self.mm.log("INFO", "Maestro", f"Tarefa direta iniciada: {goal[:100]}")
 
         try:
-            result = engine.run(goal=goal, verbose=verbose)
+            result = engine.run(goal=goal, verbose=verbose, interactive=interactive)
             self.mm.log("INFO", "Maestro", f"Tarefa concluída: {result[:100]}")
             self._tasks_processed += 1
             return result

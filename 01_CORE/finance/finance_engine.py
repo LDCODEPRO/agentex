@@ -125,7 +125,13 @@ class FinanceEngine:
         Circuit breaker: chame antes de qualquer chamada LLM paga.
         Retorna (True, "ALLOW") ou (False, motivo_do_bloqueio).
         """
-        if os.getenv("AGENTE_X_STOP_ALL_PAID_LLM", "false").lower() == "true" and provider != "ollama":
+        # Kill switch vale para tarefas em fila/daemon (custo zero sempre). Chat
+        # interativo (purpose=CHAT_INTERACTIVE) tem exceção deliberada do Diretor:
+        # respostas em segundos custam fracoes de centavo e ainda respeitam o
+        # daily_limit/hard_stop abaixo -- nao e um cheque em branco.
+        if (os.getenv("AGENTE_X_STOP_ALL_PAID_LLM", "false").lower() == "true"
+                and provider != "ollama"
+                and purpose != "CHAT_INTERACTIVE"):
             reason = "Kill switch ativo: AGENTE_X_STOP_ALL_PAID_LLM=true"
             self._log_blocked(provider, model, est_input, est_output, mission_id, purpose, reason)
             return False, reason
