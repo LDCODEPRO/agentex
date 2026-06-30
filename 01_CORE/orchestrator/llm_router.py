@@ -169,12 +169,16 @@ class LLMRouter:
         r.raise_for_status()
         return r.json()["message"]["content"]
 
-    def _call_studio(self, url: str, prompt: str, system: str = None) -> str:
-        """Ponte de assinatura LOCAL do Diretor (ex: Studio de Posts). Custo ZERO.
-        Contrato: POST {message, history:[], system} -> {reply}. O login/assinatura
-        ficam inteiramente na ponte (o Diretor opera); aqui so trocamos texto via
-        HTTP local. 'system' sobrescreve a persona padrao da ponte (ex: Agente-X
-        precisa da sua propria identidade + formato Thought/Action/Final Answer)."""
+    def _call_bridge(self, url: str, prompt: str, system: str = None) -> str:
+        """Ponte de assinatura PROPRIA do Agente-X. Custo ZERO.
+        Aponta para qualquer servico HTTP que fale o contrato
+        POST {message, history:[], system} -> {reply}. O login/assinatura e a
+        automacao de navegador ficam inteiramente na ponte (o Diretor opera e
+        decide qual processo roda ali — hoje o Studio, no futuro pode ser outro);
+        aqui o Agente-X so troca texto via HTTP local, sem saber ou se importar
+        com quem esta do outro lado. 'system' sobrescreve a persona padrao da
+        ponte (o Agente-X precisa da sua propria identidade + formato
+        Thought/Action/Final Answer, diferente da persona default da ponte)."""
         payload = {"message": prompt, "history": []}
         if system:
             payload["system"] = system
@@ -332,18 +336,18 @@ class LLMRouter:
                     return suggested_map[provider]
             return default_model
 
-        # 0. STUDIO BRIDGE — assinatura via ponte local do Diretor. Prioridade MAXIMA, custo ZERO.
-        # So ativa se STUDIO_BRIDGE_URL estiver no .env E a ponte estiver no ar; senao cai pro fallback.
-        studio_url = os.getenv("STUDIO_BRIDGE_URL", "")
-        if studio_url:
+        # 0. PONTE DE ASSINATURA — cerebro proprio do Agente-X via ponte HTTP. Prioridade MAXIMA, custo ZERO.
+        # So ativa se AGENTE_X_BRIDGE_URL estiver no .env E a ponte estiver no ar; senao cai pro fallback.
+        bridge_url = os.getenv("AGENTE_X_BRIDGE_URL", "")
+        if bridge_url:
             try:
                 t0 = time.time()
-                resp = self._call_studio(studio_url, prompt or "Continue.", system=system)
+                resp = self._call_bridge(bridge_url, prompt or "Continue.", system=system)
                 if resp and resp.strip():
-                    return self._build_result("studio", "assinatura", resp, t0)
+                    return self._build_result("bridge", "assinatura", resp, t0)
             except Exception as e:
-                errors.append(f"studio: {e}")
-                logger.warning("Studio bridge indisponivel (caindo pro fallback): %s", e)
+                errors.append(f"bridge: {e}")
+                logger.warning("Ponte de assinatura indisponivel (caindo pro fallback): %s", e)
 
         # 1. Claude (Anthropic) - Prioridade Máxima de Assinatura Direta + Caching
         claude_key = os.getenv("CLAUDE_API_KEY", "")
