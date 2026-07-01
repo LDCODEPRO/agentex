@@ -1,0 +1,130 @@
+{
+  "timestamp": "2026-06-30T22:08:14.310641",
+  "date": "2026-06-30",
+  "db_available": true,
+  "missions": {
+    "total": 5,
+    "done": 0,
+    "pending": 0,
+    "running": 0,
+    "failed": 0,
+    "list": [
+      {
+        "code": "TASK_1782854804",
+        "title": "Mission TASK_1782854804",
+        "status": "MISSION_FAILED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "TASK_1782856838",
+        "title": "Mission TASK_1782856838",
+        "status": "MISSION_VALIDATED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "TASK_1782859091",
+        "title": "Mission TASK_1782859091",
+        "status": "MISSION_VALIDATED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "TASK_1782859902",
+        "title": "Mission TASK_1782859902",
+        "status": "MISSION_FAILED",
+        "started_at": null,
+        "ended_at": null
+      },
+      {
+        "code": "TASK_1782860012",
+        "title": "Mission TASK_1782860012",
+        "status": "MISSION_VALIDATED",
+        "started_at": null,
+        "ended_at": null
+      }
+    ]
+  },
+  "queue": {
+    "queued": 0,
+    "running": 0,
+    "done": 5,
+    "failed": 0,
+    "cancelled": 0,
+    "done_today": 5,
+    "stuck_running": 0
+  },
+  "finance": {
+    "today_usd": 0.0,
+    "month_usd": 0.0,
+    "total_usd": 0.0,
+    "top_model": "assinatura",
+    "calls_today": 3
+  },
+  "logs": {
+    "total": 27,
+    "errors_today": 0,
+    "warnings_today": 0,
+    "recent_errors": []
+  },
+  "knowledge": {
+    "total": 53,
+    "by_category": [
+      {
+        "category": "RULE",
+        "count": 16
+      },
+      {
+        "category": "AGENT_PATTERNS",
+        "count": 8
+      },
+      {
+        "category": "LESSONS_LEARNED",
+        "count": 7
+      },
+      {
+        "category": "ARCHITECTURE",
+        "count": 6
+      },
+      {
+        "category": "OPERATIONAL_RULES",
+        "count": 5
+      },
+      {
+        "category": "LLM_PRICES",
+        "count": 4
+      },
+      {
+        "category": "DIAGNOSTICS",
+        "count": 3
+      },
+      {
+        "category": "LLM_CONFIG",
+        "count": 3
+      },
+      {
+        "category": "SYSTEM_AUDIT",
+        "count": 1
+      }
+    ]
+  },
+  "providers": {
+    "deepseek": true,
+    "claude": true,
+    "openai": true,
+    "gemini": true,
+    "configured_count": 4
+  },
+  "backups": {
+    "count": 6,
+    "latest": "backup_2026-06-30",
+    "list": [
+      "backup_2026-05-26",
+      "backup_2026-05-27",
+      "backup_2026-05-29",
+      "backup_2026-06-29",
+      "backup_2026-06-30"
+    ]
+  }
+}
