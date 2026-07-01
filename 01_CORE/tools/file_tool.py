@@ -17,6 +17,19 @@ validate_action = _sg_mod.validate_action
 sys.path.insert(0, str(_ROOT / "01_CORE" / "tools"))
 from base_tool import BaseTool
 
+sys.path.insert(0, str(_ROOT / "02_MEMORY" / "long_term"))
+from memory_manager import MemoryManager
+
+_mm = MemoryManager()
+
+
+def _log_blocked(op: str, target: str, msg: str) -> None:
+    """Registra bloqueio do safe_gate para a tela de Seguranca do cockpit."""
+    try:
+        _mm.log("WARNING", "safe_gate", f"{op} bloqueado: {target} | {msg}")
+    except Exception:
+        pass
+
 
 class FileTool(BaseTool):
     name = "file_tool"
@@ -47,6 +60,7 @@ class FileTool(BaseTool):
         elif operation == "write":
             ok, msg = validate_action("WRITE", str(target))
             if not ok:
+                _log_blocked("WRITE", str(path), msg)
                 return f"[FileTool] BLOQUEADO: {msg}"
             
             # Syntax Guard para scripts Python

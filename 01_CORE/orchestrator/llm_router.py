@@ -344,6 +344,8 @@ class LLMRouter:
                 t0 = time.time()
                 resp = self._call_bridge(bridge_url, prompt or "Continue.", system=system)
                 if resp and resp.strip():
+                    if _FINANCE:
+                        _FINANCE.record_usage("bridge", "assinatura", 0, 0, mission_id=mission_id, purpose=purpose)
                     return self._build_result("bridge", "assinatura", resp, t0)
             except Exception as e:
                 errors.append(f"bridge: {e}")
@@ -370,7 +372,7 @@ class LLMRouter:
                 if _FINANCE:
                     tokens_in = len(prompt or "") // 4
                     tokens_out = len(resp) // 4
-                    _FINANCE.record_usage("claude", m, tokens_in, tokens_out)
+                    _FINANCE.record_usage("claude", m, tokens_in, tokens_out, mission_id=mission_id, purpose=purpose)
                 return result
             except Exception as e:
                 errors.append(f"claude: {e}")
@@ -400,7 +402,7 @@ class LLMRouter:
                 if _FINANCE:
                     tokens_in = len(prompt or "") // 4
                     tokens_out = len(resp) // 4
-                    _FINANCE.record_usage("openai", m, tokens_in, tokens_out)
+                    _FINANCE.record_usage("openai", m, tokens_in, tokens_out, mission_id=mission_id, purpose=purpose)
                 return result
             except Exception as e:
                 errors.append(f"openai: {e}")
@@ -427,7 +429,7 @@ class LLMRouter:
                 if _FINANCE:
                     tokens_in = len(prompt or "") // 4
                     tokens_out = len(resp) // 4
-                    _FINANCE.record_usage("openrouter", m, tokens_in, tokens_out)
+                    _FINANCE.record_usage("openrouter", m, tokens_in, tokens_out, mission_id=mission_id, purpose=purpose)
                 return result
             except Exception as e:
                 errors.append(f"openrouter: {e}")
@@ -457,7 +459,7 @@ class LLMRouter:
                 if _FINANCE:
                     tokens_in = len(prompt or "") // 4
                     tokens_out = len(resp) // 4
-                    _FINANCE.record_usage("deepseek", m, tokens_in, tokens_out)
+                    _FINANCE.record_usage("deepseek", m, tokens_in, tokens_out, mission_id=mission_id, purpose=purpose)
                 return result
             except Exception as e:
                 errors.append(f"deepseek: {e}")
@@ -484,7 +486,7 @@ class LLMRouter:
                 if _FINANCE:
                     tokens_in = len(prompt or "") // 4
                     tokens_out = len(resp) // 4
-                    _FINANCE.record_usage("gemini", m, tokens_in, tokens_out)
+                    _FINANCE.record_usage("gemini", m, tokens_in, tokens_out, mission_id=mission_id, purpose=purpose)
                 return result
             except Exception as e:
                 errors.append(f"gemini: {e}")
@@ -496,6 +498,8 @@ class LLMRouter:
                 t0 = time.time()
                 m = get_model_for("ollama", self.OLLAMA_MODEL)
                 resp = self._call_ollama(messages, m)
+                if _FINANCE:
+                    _FINANCE.record_usage("ollama", m, 0, 0, mission_id=mission_id, purpose=purpose)
                 return self._build_result("ollama", m, resp, t0)
             except Exception as e:
                 errors.append(f"ollama: {e}")

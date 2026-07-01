@@ -19,6 +19,11 @@ validate_action = _sg_mod.validate_action
 sys.path.insert(0, str(_ROOT / "01_CORE" / "tools"))
 from base_tool import BaseTool
 
+sys.path.insert(0, str(_ROOT / "02_MEMORY" / "long_term"))
+from memory_manager import MemoryManager
+
+_mm = MemoryManager()
+
 DEFAULT_TIMEOUT = 30
 
 
@@ -34,6 +39,10 @@ class ShellTool(BaseTool):
     def execute(self, command: str, timeout: int = DEFAULT_TIMEOUT, cwd: str = None) -> str:
         ok, msg = validate_action("SHELL", command)
         if not ok:
+            try:
+                _mm.log("WARNING", "safe_gate", f"Comando bloqueado: {command[:200]} | {msg}")
+            except Exception:
+                pass
             return f"[ShellTool] BLOQUEADO: {msg}"
         work_dir = str(_ROOT / cwd) if cwd else str(_ROOT)
         try:

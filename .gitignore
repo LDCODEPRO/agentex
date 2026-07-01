@@ -37,6 +37,10 @@ venv/
 env/
 .env_python/
 
+# Node (frontend do cockpit) -- build fica versionado (VPS sem Node), so as deps nao
+node_modules/
+!04_WORKSPACE_MONITOR/dist/
+
 # Logs & Debug
 *.log
 09_LOGS/*.log

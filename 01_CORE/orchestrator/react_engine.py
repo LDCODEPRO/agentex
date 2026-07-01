@@ -130,10 +130,14 @@ class ReActEngine:
     # Execução principal
     # ------------------------------------------------------------------
 
-    def run(self, goal: str, verbose: bool = True, interactive: bool = False) -> str:
+    def run(self, goal: str, verbose: bool = True, interactive: bool = False, return_trace: bool = False):
         """
         Executa o loop ReAct para atingir o objetivo.
-        Retorna a resposta final ou mensagem de erro.
+        Retorna a resposta final (str) ou, se return_trace=True, um dict
+        {final_answer, thought, action, observation, provider, latency_ms}
+        com o ultimo passo estruturado -- usado pelo cockpit web pra exibir
+        Pensamento/Acao/Observacao/Resposta. O uso via CLI (return_trace=False,
+        padrao) nao muda: continua recebendo so a string.
 
         interactive=True: chat em tempo real com o Diretor esperando resposta.
         Sai do Ollama custo-zero (lento, CPU-only) pra provedor pago barato.
@@ -146,6 +150,7 @@ class ReActEngine:
         # Histórico da conversa (multi-turno para o LLM)
         history = []
         final_answer = None
+        trace = {"thought": None, "action": None, "observation": None, "provider": None, "latency_ms": None}
 
         for step in range(1, MAX_STEPS + 1):
             if verbose:
@@ -183,6 +188,8 @@ class ReActEngine:
 
                 llm_response = result["response"].strip()
                 provider = result["provider"]
+                trace["provider"] = provider
+                trace["latency_ms"] = result.get("latency_ms")
 
                 # Hallucination Guard: valida resposta contra contexto acumulado
                 if _HGUARD and history:
@@ -195,12 +202,14 @@ class ReActEngine:
                         logger.critical(alert_msg)
                         if verbose:
                             print(f"\n[CRITICAL] {alert_msg}\n")
-                        return f"[SAFE_MODE] Missão bloqueada por Hallucination Guard. Requer liberação humana."
+                        final_answer = "[SAFE_MODE] Missão bloqueada por Hallucination Guard. Requer liberação humana."
+                        break
                     elif hg_result["status"] == "RESTRICTED_MODE":
                         logger.warning("HallucinationGuard RESTRICTED_MODE: risk=%.2f", hg_result["risk_score"])
                         if verbose:
                             print(f"[WARNING] RESTRICTED_MODE: Missão interrompida. Risco médio ({hg_result['risk_score']:.2f})")
-                        return f"[RESTRICTED] Requer revisão de evidência para continuar."
+                        final_answer = "[RESTRICTED] Requer revisão de evidência para continuar."
+                        break
                     elif hg_result["status"] == "WARNING":
                         logger.warning("HallucinationGuard WARNING: risk=%.2f", hg_result["risk_score"])
 
@@ -212,7 +221,8 @@ class ReActEngine:
             except RuntimeError as e:
                 error_msg = f"Sem LLM disponível: {e}"
                 logger.error(error_msg)
-                return f"[ReAct] FALHA CRÍTICA: {error_msg}"
+                final_answer = f"[ReAct] FALHA CRÍTICA: {error_msg}"
+                break
 
             # Parse da resposta do LLM
             parsed = self._parse_response(llm_response)
@@ -220,6 +230,9 @@ class ReActEngine:
             if parsed["type"] == "final_answer":
                 final_answer = parsed["content"]
                 self._step_log.append(f"FINAL: {final_answer[:100]}")
+                thought_match = re.search(r"Thought:\s*(.+?)(?=Action:|Final Answer:|$)", llm_response, re.DOTALL | re.IGNORECASE)
+                if thought_match:
+                    trace["thought"] = thought_match.group(1).strip()
                 if verbose:
                     print(f"\n✅ RESPOSTA FINAL:\n{final_answer}")
                 break
@@ -232,6 +245,7 @@ class ReActEngine:
                 if thought:
                     self.context.add_thought(thought)
                     self._step_log.append(f"THOUGHT: {thought[:80]}")
+                    trace["thought"] = thought
 
                 # Executar ferramenta
                 if verbose:
@@ -241,6 +255,8 @@ class ReActEngine:
                 self._tools_used.append(tool_name)
                 self.context.add_observation(tool_name, observation)
                 self._step_log.append(f"ACTION: {tool_name} → {observation[:80]}")
+                trace["action"] = f"{tool_name}({json.dumps(tool_input)[:100]})"
+                trace["observation"] = observation[:300]
 
                 if verbose:
                     print(f"👁️  Observação: {observation[:200]}{'...' if len(observation) > 200 else ''}")
@@ -283,7 +299,17 @@ class ReActEngine:
             if skill_id:
                 logger.info("Skill salva: %s", skill_id)
 
-        return final_answer or "[ReAct] Sem resposta final."
+        final_text = final_answer or "[ReAct] Sem resposta final."
+        if return_trace:
+            return {
+                "final_answer": final_text,
+                "thought": trace["thought"],
+                "action": trace["action"],
+                "observation": trace["observation"],
+                "provider": trace["provider"],
+                "latency_ms": trace["latency_ms"],
+            }
+        return final_text
 
     # ------------------------------------------------------------------
     # Parsing da resposta do LLM
