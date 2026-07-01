@@ -78,6 +78,20 @@ logger = logging.getLogger("ReActEngine")
 MAX_STEPS = 20       # Limite de segurança para evitar loops infinitos
 MAX_RETRIES = 2      # Retentativas se LLM não seguir o formato
 
+# Perguntas introspectivas/abertas (ex: "o que voce pode fazer") nao afirmam
+# fato verificavel sobre o mundo -- nao faz sentido exigir que a resposta
+# reproduza palavras da observacao de uma ferramenta (ex: um "ls"). O
+# Hallucination Guard continua ativo para qualquer claim de resultado de
+# acao (arquivo salvo, comando executado, etc.), so nao se aplica aqui.
+_INTROSPECTIVE_PATTERN = re.compile(
+    r"o que (voc[eê]|vc) (pode|consegue|sabe) fazer|"
+    r"suas capacidades|quais s[aã]o suas (ferramentas|fun[cç][oõ]es)|"
+    r"quem [eé] (voc[eê]|vc)|descreva[- ]se|se descreva|"
+    r"conte sobre (voc[eê]|vc)|o que (voc[eê]|vc) [eé]\b|"
+    r"como (voc[eê]|vc) funciona|liste (suas|as) (ferramentas|fun[cç][oõ]es|funcionalidades)",
+    re.IGNORECASE,
+)
+
 
 # ------------------------------------------------------------------
 # Prompt do sistema
@@ -146,6 +160,7 @@ class ReActEngine:
         self.context.set_goal(goal)
         self._step_log = []
         self._tools_used = []
+        is_introspective = bool(_INTROSPECTIVE_PATTERN.search(goal))
 
         # Histórico da conversa (multi-turno para o LLM)
         history = []
@@ -192,7 +207,7 @@ class ReActEngine:
                 trace["latency_ms"] = result.get("latency_ms")
 
                 # Hallucination Guard: valida resposta contra contexto acumulado
-                if _HGUARD and history:
+                if _HGUARD and history and not is_introspective:
                     ctx_text = " ".join(
                         str(h.get("observation", "")) for h in history[-3:]
                     )
