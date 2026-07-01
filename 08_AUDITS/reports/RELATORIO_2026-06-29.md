@@ -1,5 +1,5 @@
 # AGENTE-X — Relatório Diário
-**Data:** 2026-06-29  |  **Gerado:** 2026-06-29 18:03:52
+**Data:** 2026-06-29  |  **Gerado:** 2026-06-29 23:39:34
 
 ---
 
@@ -10,8 +10,8 @@
 | Missões concluídas | 7 / 1113 |
 | Tarefas na fila | 0 aguardando |
 | Tarefas concluídas hoje | 0 |
-| Gasto LLM hoje | $0.000000 |
-| Gasto no mês | $0.000000 |
+| Gasto LLM hoje | $0.000010 |
+| Gasto no mês | $0.000010 |
 | Erros hoje | 0 |
 | Knowledge Base | 112 registros |
 | Providers ativos | 4/4 |
@@ -61,11 +61,11 @@
 
 ## 💰 Finanças LLM
 
-- **Hoje:** $0.000000
-- **Mês:** $0.000000
-- **Total histórico:** $0.014243
-- **Chamadas hoje:** 0
-- **Modelo mais usado hoje:** `N/A`
+- **Hoje:** $0.000010
+- **Mês:** $0.000010
+- **Total histórico:** $0.014253
+- **Chamadas hoje:** 5
+- **Modelo mais usado hoje:** `deepseek-v4-pro`
 
 ---
 

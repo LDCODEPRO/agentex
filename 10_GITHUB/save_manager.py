@@ -14,8 +14,10 @@ import sqlite3
 import time
 from pathlib import Path
 from datetime import datetime
+from dotenv import load_dotenv
 
 _ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(_ROOT / ".env")
 sys.path.insert(0, str(_ROOT / "02_MEMORY" / "long_term"))
 
 BACKUP_DIR = _ROOT / "13_BACKUPS_DIARIOS"

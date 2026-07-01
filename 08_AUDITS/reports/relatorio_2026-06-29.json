@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-29T18:03:52.330455",
+  "timestamp": "2026-06-29T23:39:34.091951",
   "date": "2026-06-29",
   "db_available": true,
   "missions": {
@@ -161,14 +161,14 @@
     "stuck_running": 0
   },
   "finance": {
-    "today_usd": 0.0,
-    "month_usd": 0.0,
-    "total_usd": 0.014243,
-    "top_model": "N/A",
-    "calls_today": 0
+    "today_usd": 1e-05,
+    "month_usd": 1e-05,
+    "total_usd": 0.014253,
+    "top_model": "deepseek-v4-pro",
+    "calls_today": 5
   },
   "logs": {
-    "total": 8403,
+    "total": 8404,
     "errors_today": 0,
     "warnings_today": 0,
     "recent_errors": [
